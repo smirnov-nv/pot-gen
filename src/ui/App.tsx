@@ -9,7 +9,10 @@ import { computeMetrics } from '../core/metrics';
 import { stlFileName } from '../core/params';
 import { validate } from '../core/validate';
 import { usePotStore } from '../store/usePotStore';
+import { MetricsPanel } from './MetricsPanel';
 import { ParamPanel } from './ParamPanel';
+import { SlicerHints } from './SlicerHints';
+import { WarningsPanel } from './WarningsPanel';
 import { Viewport3D } from './Viewport3D';
 import { useMeshWorker } from './useMeshWorker';
 
@@ -120,20 +123,10 @@ export function App() {
           )}
         </main>
 
-        <aside className="w-80 shrink-0 overflow-y-auto border-l border-edge bg-panel p-3 text-xs">
-          <div className="tabular-nums text-slate-300">
-            <div>Объём: {metrics.usableVolumeL.toFixed(2)} л</div>
-            <div>Филамент: {metrics.grams.toFixed(0)} г</div>
-            <div>Слоёв: {metrics.layers}</div>
-            <div>Время: ~{Math.round(metrics.minutes)} мин</div>
-          </div>
-          <ul className="mt-3 space-y-1">
-            {warnings.map((w) => (
-              <li key={w.id} className="text-slate-400">
-                {w.text}
-              </li>
-            ))}
-          </ul>
+        <aside className="w-80 shrink-0 overflow-y-auto border-l border-edge bg-panel">
+          <MetricsPanel metrics={metrics} params={params} triangleCount={mesh.triangleCount} />
+          <WarningsPanel warnings={warnings} showVaseNotes={params.mode === 'vase'} />
+          <SlicerHints params={params} metrics={metrics} />
         </aside>
       </div>
     </div>
