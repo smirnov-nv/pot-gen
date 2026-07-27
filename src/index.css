@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-[#0f1115] text-slate-200 antialiased;
+    font-family: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+@layer components {
+  .field-label {
+    @apply flex items-baseline justify-between text-xs text-slate-400;
+  }
+
+  .num-input {
+    @apply w-20 rounded border border-edge bg-panelalt px-1.5 py-0.5 text-right
+      text-xs tabular-nums text-slate-100 outline-none focus:border-sky-500;
+  }
+
+  .btn {
+    @apply rounded border border-edge bg-panelalt px-2.5 py-1.5 text-xs
+      text-slate-200 transition-colors hover:border-sky-600 hover:text-white
+      disabled:cursor-not-allowed disabled:opacity-40;
+  }
+}

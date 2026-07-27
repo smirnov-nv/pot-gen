@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.idea
+.vscode
+coverage
+docs/api
+*.stl
+*.log
+.DS_Store

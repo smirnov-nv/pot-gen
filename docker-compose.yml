@@ -1,0 +1,65 @@
+name: potgen
+
+# Shared definition for every Node-based service: same image, same bind mount,
+# same node_modules isolation. CI runs these very services -- no separate path.
+x-node: &node
+  build:
+    context: .
+    target: dev
+  image: potgen-dev
+  working_dir: /app
+  volumes:
+    - .:/app
+    # Anonymous volume: without it the host bind mount would shadow the
+    # node_modules installed in the image with an empty (or host-arch) tree.
+    - /app/node_modules
+  environment:
+    # Vite's file watcher misses events through bind mounts on macOS/Windows.
+    - CHOKIDAR_USEPOLLING=${POLL:-1}
+    - VITE_USE_POLLING=${POLL:-1}
+
+services:
+  dev:
+    <<: *node
+    command: pnpm dev
+    ports:
+      - "5173:5173"
+      - "9229:9229"
+
+  test:
+    <<: *node
+    command: pnpm test
+
+  test-watch:
+    <<: *node
+    command: pnpm test:watch
+
+  lint:
+    <<: *node
+    command: pnpm verify
+
+  build:
+    <<: *node
+    command: pnpm build
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  preview:
+    build:
+      context: .
+      target: runtime
+    image: potgen-runtime
+    ports:
+      - "8080:80"
+
+  # Reference implementation. Regenerates tests/fixtures/*.json from potgen.py.
+  fixtures:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    image: potgen-python
+    working_dir: /work
+    volumes:
+      - .:/work
+    command: python3 scripts/gen_fixtures.py

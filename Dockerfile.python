@@ -1,0 +1,16 @@
+# Reference implementation image.
+#
+# potgen.py is the source of truth for the geometry port. Golden fixtures are
+# regenerated here and nowhere else: pinning the interpreter keeps the
+# reference values identical across machines and CI.
+FROM python:3.12-slim
+
+# potgen.py has no third-party dependencies on purpose -- keep it that way.
+RUN useradd --uid 1000 --create-home app \
+    && mkdir -p /work \
+    && chown app:app /work
+
+WORKDIR /work
+USER app
+
+CMD ["python3", "scripts/gen_fixtures.py"]
