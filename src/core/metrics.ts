@@ -172,6 +172,11 @@ export function computeMetrics(params: Params, rings: readonly Ring[] = buildRin
   }
   wallVolume += Math.max(0, bottomVolume);
 
+  if (shell && params.slots > 0) {
+    // Air-pruning slots are cut straight through the wall.
+    wallVolume = Math.max(0, wallVolume - params.slots * params.slotWidth * params.slotHeight * wall);
+  }
+
   const grams = (wallVolume / 1000) * params.density;
   const layers = Math.floor(height / params.layerH);
   const avgPerimeter = pathLength / (n - 1);

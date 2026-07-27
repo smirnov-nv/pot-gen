@@ -122,3 +122,12 @@ describe('warning ordering and notes', () => {
     expect(VASE_MODE_NOTES[1]).toMatch(/один объект/);
   });
 });
+
+describe('validate — shell geometry limits', () => {
+  const shell: Partial<Params> = { mode: 'shell' };
+
+  it('warns when the drainage will not fit and gets dropped', () => {
+    expect(levelOf({ ...shell, bottomSize: 40, drainDia: 15 }, 'drain-no-fit')).toBe('warning');
+    expect(levelOf({ ...shell }, 'drain-no-fit')).toBeUndefined();
+  });
+});

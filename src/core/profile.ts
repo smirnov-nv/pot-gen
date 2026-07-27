@@ -196,45 +196,104 @@ export type ProfileParams = Pick<
  * ```
  */
 export function buildRings(p: ProfileParams): Ring[] {
-  const seg = Math.max(3, Math.round(p.seg));
-  const nz = Math.max(2, Math.round(p.height / p.dz) + 1);
+  const seg = ringCount(p);
+  const nz = ringLevels(p);
   const rings: Ring[] = new Array<Ring>(nz);
 
   for (let i = 0; i < nz; i++) {
     const z = (p.height * i) / (nz - 1);
-    const f = z / p.height;
-    const half = 0.5 * (p.bottomSize + (p.topSize - p.bottomSize) * f);
-    // Corner radius and flute amplitude scale with the section: a constant
-    // radius would make the lower sections proportionally rounder and the
-    // stack of nested pots would sit crooked.
-    const cr = p.cornerR * (half / (0.5 * p.topSize));
-    const amp = p.fluteAmp * (half / (0.5 * p.topSize));
+    const g = ringGeometryAt(p, z);
 
-    const prof = baseProfile(half, cr, p.flutes, amp, seg);
+    const prof = baseProfile(g.half, g.cornerR, p.flutes, g.fluteAmp, seg);
 
-    if (p.rimH > 0 && z > p.height - p.rimH) {
-      // Quadratic so the lip leaves the wall tangentially instead of with a
-      // visible crease; g² also keeps the very first flared layer tiny.
-      const g = (z - (p.height - p.rimH)) / p.rimH;
-      const scale = (half + p.rimFlare * g * g) / half;
-      for (let j = 0; j < prof.length; j++) prof[j] = prof[j]! * scale;
+    if (g.flareScale !== 1) {
+      for (let j = 0; j < prof.length; j++) prof[j] = prof[j]! * g.flareScale;
     }
-
-    if (p.twist) {
-      const a = (Math.PI / 180) * (p.twist * z);
-      const ca = Math.cos(a);
-      const sa = Math.sin(a);
-      for (let j = 0; j < seg; j++) {
-        const x = prof[j * 2]!;
-        const y = prof[j * 2 + 1]!;
-        prof[j * 2] = x * ca - y * sa;
-        prof[j * 2 + 1] = x * sa + y * ca;
-      }
-    }
+    if (g.twistAngle !== 0) rotateInPlace(prof, g.twistAngle);
 
     rings[i] = { z, pts: prof };
   }
   return rings;
+}
+
+/** Section parameters at one height, before the contour is generated. */
+export interface RingGeometry {
+  /** Half width of the section, mm. */
+  half: number;
+  /** Corner radius at this height, mm. */
+  cornerR: number;
+  /** Flute amplitude at this height, mm. */
+  fluteAmp: number;
+  /** Uniform outward scale applied by the rim flare; 1 below the lip. */
+  flareScale: number;
+  /** Twist at this height, radians. */
+  twistAngle: number;
+}
+
+/**
+ * Section parameters at a given height.
+ *
+ * Shared by the vase rings and by shell mode, which needs the same numbers to
+ * derive the inner wall. Duplicating the taper maths in two places is exactly
+ * how the two surfaces would drift apart.
+ *
+ * @param p - shape parameters
+ * @param z - height above the plate, mm
+ * @returns section parameters at `z`
+ *
+ * @example
+ * ```ts
+ * import { DEFAULT_PARAMS } from '@core/params';
+ * import { ringGeometryAt } from '@core/profile';
+ * ringGeometryAt(DEFAULT_PARAMS, 0).half; // 34
+ * ```
+ */
+export function ringGeometryAt(p: ProfileParams, z: number): RingGeometry {
+  const f = z / p.height;
+  const half = 0.5 * (p.bottomSize + (p.topSize - p.bottomSize) * f);
+  // Corner radius and flute amplitude scale with the section: a constant
+  // radius would make the lower sections proportionally rounder and the
+  // stack of nested pots would sit crooked.
+  const cornerR = p.cornerR * (half / (0.5 * p.topSize));
+  const fluteAmp = p.fluteAmp * (half / (0.5 * p.topSize));
+
+  let flareScale = 1;
+  if (p.rimH > 0 && z > p.height - p.rimH) {
+    // Quadratic so the lip leaves the wall tangentially instead of with a
+    // visible crease; g² also keeps the very first flared layer tiny.
+    const g = (z - (p.height - p.rimH)) / p.rimH;
+    flareScale = (half + p.rimFlare * g * g) / half;
+  }
+
+  return {
+    half,
+    cornerR,
+    fluteAmp,
+    flareScale,
+    twistAngle: p.twist ? (Math.PI / 180) * (p.twist * z) : 0,
+  };
+}
+
+/** Points per section, as the mesh actually uses it. */
+export function ringCount(p: Pick<ProfileParams, 'seg'>): number {
+  return Math.max(3, Math.round(p.seg));
+}
+
+/** Number of horizontal slices, as the mesh actually uses it. */
+export function ringLevels(p: Pick<ProfileParams, 'height' | 'dz'>): number {
+  return Math.max(2, Math.round(p.height / p.dz) + 1);
+}
+
+/** Rotates a flat contour about the origin, in place. */
+export function rotateInPlace(pts: Float64Array, angle: number): void {
+  const ca = Math.cos(angle);
+  const sa = Math.sin(angle);
+  for (let j = 0; j < pts.length; j += 2) {
+    const x = pts[j]!;
+    const y = pts[j + 1]!;
+    pts[j] = x * ca - y * sa;
+    pts[j + 1] = x * sa + y * ca;
+  }
 }
 
 /**

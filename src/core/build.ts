@@ -10,6 +10,7 @@
 import type { Mesh } from './mesh';
 import { buildVaseMesh } from './mesh';
 import type { Params } from './params';
+import { buildShellMesh } from './shell';
 
 /**
  * Builds the mesh for the current mode.
@@ -25,5 +26,5 @@ import type { Params } from './params';
  * ```
  */
 export function buildMesh(params: Params): Mesh {
-  return buildVaseMesh(params);
+  return params.mode === 'shell' ? buildShellMesh(params) : buildVaseMesh(params);
 }

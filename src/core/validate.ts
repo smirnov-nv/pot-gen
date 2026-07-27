@@ -193,6 +193,18 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
       }
     }
 
+    // Cavity half-width, as the mesh builder derives it. Holes that reach the
+    // cavity wall are silently dropped by the builder, so say so here.
+    const cavityHalf = params.bottomSize / 2 - params.wallThickness - params.fluteAmp;
+    if (params.drainHoles > 0 && params.bottomSize * 0.25 + params.drainDia / 2 >= cavityHalf - 1) {
+      add(
+        'drain-no-fit',
+        'warning',
+        `Дренаж ⌀${params.drainDia} мм не помещается в дно — отверстия не будут вырезаны. ` +
+          'Уменьшите диаметр или увеличьте дно.',
+      );
+    }
+
     if (params.slots > 0 && params.slotHeight > params.height - params.rimH) {
       add(
         'slots-too-tall',
