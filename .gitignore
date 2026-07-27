@@ -32,7 +32,6 @@ bin/
 node_modules/
 dist/
 coverage/
-docs/api/
 *.stl
 .env
 __pycache__/
