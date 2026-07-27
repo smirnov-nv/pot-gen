@@ -35,3 +35,4 @@ coverage/
 docs/api/
 *.stl
 .env
+__pycache__/

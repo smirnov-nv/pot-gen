@@ -8,3 +8,4 @@ docs/api
 *.stl
 *.log
 .DS_Store
+__pycache__

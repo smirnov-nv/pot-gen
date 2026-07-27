@@ -62,4 +62,4 @@ services:
     working_dir: /work
     volumes:
       - .:/work
-    command: python3 scripts/gen_fixtures.py
+    command: python3 tests/fixtures/gen_fixtures.py

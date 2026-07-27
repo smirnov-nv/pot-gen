@@ -13,4 +13,4 @@ RUN useradd --uid 1000 --create-home app \
 WORKDIR /work
 USER app
 
-CMD ["python3", "scripts/gen_fixtures.py"]
+CMD ["python3", "tests/fixtures/gen_fixtures.py"]
