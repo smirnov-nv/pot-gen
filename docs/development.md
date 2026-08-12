@@ -47,6 +47,7 @@
 
 ```sh
 make dev            # http://localhost:5173, HMR работает через bind-mount
+make restart        # пересоздать dev-контейнер в фоне (+ make logs / make stop)
 make test           # один прогон
 make test-watch     # watch-режим
 make lint           # tsc --noEmit + eslint + docs:check + тесты

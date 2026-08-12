@@ -4,7 +4,7 @@
 
 COMPOSE := docker compose
 
-.PHONY: help dev test test-watch lint typecheck build preview fixtures shell install lock clean
+.PHONY: help dev restart logs stop test test-watch lint typecheck build preview fixtures shell install lock clean
 
 help: ## Показать доступные команды
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -12,6 +12,18 @@ help: ## Показать доступные команды
 
 dev: ## Dev-сервер на http://localhost:5173 (HMR, инспектор на 9229)
 	$(COMPOSE) up --build dev
+
+# Пересоздаёт контейнер, а не `restart`: так подхватываются изменения в
+# Dockerfile и docker-compose.yml, а не только перезапускается vite.
+restart: ## Перезапустить dev-сервер в фоне (логи -- make logs)
+	$(COMPOSE) up -d --build --force-recreate dev
+	@echo "dev: http://localhost:5173"
+
+logs: ## Логи фонового dev-сервера (Ctrl-C выходит, сервер живёт)
+	$(COMPOSE) logs -f dev
+
+stop: ## Остановить фоновые контейнеры
+	$(COMPOSE) stop
 
 test: ## Прогнать тесты один раз
 	$(COMPOSE) run --rm --build test

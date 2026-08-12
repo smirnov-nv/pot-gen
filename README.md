@@ -34,6 +34,7 @@ make dev            # http://localhost:5173
 Остальные команды:
 
 ```sh
+make restart        # перезапустить dev-сервер в фоне
 make test           # тесты
 make lint           # tsc --noEmit + eslint + docs:check
 make build          # production-сборка в ./dist

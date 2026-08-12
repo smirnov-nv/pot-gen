@@ -34,6 +34,13 @@ function Field({
   value: number;
   onChange: (v: number) => void;
 }) {
+  // While the box is being typed into, it shows exactly what was typed. Feeding
+  // the clamped-and-snapped value back on every keystroke would make the field
+  // unusable: "150" in a 40..250 field becomes 40 → 405 → 250, and "0.75" in a
+  // 0.05-grid field never survives its own decimal point. The draft is dropped
+  // on blur, when the canonical value takes over again.
+  const [draft, setDraft] = useState<string | null>(null);
+
   return (
     <label className="block px-3 py-1.5" title={spec.description}>
       <span className="field-label">
@@ -42,11 +49,22 @@ function Field({
           <input
             className="num-input"
             type="number"
-            value={value}
+            value={draft ?? String(value)}
             min={spec.min}
             max={spec.max}
             step={spec.step}
-            onChange={(e) => onChange(Number(e.target.value))}
+            onChange={(e) => {
+              const raw = e.target.value;
+              setDraft(raw);
+              // An empty or half-typed box ("", "-", "0.") is an intermediate
+              // state, not a new value: the parameter keeps the last one.
+              const parsed = Number(raw);
+              if (raw.trim() !== '' && Number.isFinite(parsed)) onChange(parsed);
+            }}
+            onBlur={() => setDraft(null)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') setDraft(null);
+            }}
           />
           <span className="w-8 text-[10px] text-slate-500">{spec.unit}</span>
         </span>
@@ -58,7 +76,10 @@ function Field({
         min={spec.min}
         max={spec.max}
         step={spec.step}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => {
+          setDraft(null);
+          onChange(Number(e.target.value));
+        }}
       />
     </label>
   );
