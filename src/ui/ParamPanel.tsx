@@ -63,7 +63,16 @@ function ShapePicker({
 }
 
 /** Panel sections in display order. */
-const GROUP_ORDER: ParamGroup[] = ['shape', 'flute', 'rim', 'mesh', 'print', 'shell'];
+const GROUP_ORDER: ParamGroup[] = ['shape', 'flute', 'rim', 'mesh', 'print', 'shell', 'tray'];
+
+/**
+ * Why a group is greyed out. The parameters stay visible either way — hiding
+ * them would make the model look as if it had fewer knobs than it has.
+ */
+const DISABLED_NOTE: Partial<Record<ParamGroup, string>> = {
+  shell: '(только в shell)',
+  tray: '(только для поддона)',
+};
 
 function Field({
   spec,
@@ -132,7 +141,7 @@ function Section({
   onShapeChange,
   disabled,
 }: Props & { group: ParamGroup; disabled: boolean }) {
-  const [open, setOpen] = useState(group !== 'mesh' && group !== 'shell');
+  const [open, setOpen] = useState(group !== 'mesh' && group !== 'shell' && group !== 'tray');
   // The Y sizes exist for every shape but only mean something on the ones with
   // two independent axes; showing them under "Круг" would invite editing a
   // number that changes nothing.
@@ -149,7 +158,9 @@ function Section({
       >
         <span>
           {GROUP_TITLES[group]}
-          {disabled && <span className="ml-2 normal-case text-slate-600">(только в shell)</span>}
+          {disabled && (
+            <span className="ml-2 normal-case text-slate-600">{DISABLED_NOTE[group]}</span>
+          )}
         </span>
         <span className="text-slate-600">{open ? '−' : '+'}</span>
       </button>
@@ -186,7 +197,10 @@ export function ParamPanel({ params, onChange, onShapeChange }: Props) {
           params={params}
           onChange={onChange}
           onShapeChange={onShapeChange}
-          disabled={group === 'shell' && params.mode !== 'shell'}
+          disabled={
+            (group === 'shell' && params.mode !== 'shell') ||
+            (group === 'tray' && params.object !== 'tray')
+          }
         />
       ))}
     </div>

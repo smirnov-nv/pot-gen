@@ -22,6 +22,7 @@ round-trips through it. Adding a parameter anywhere else is a bug.
 ## Type Aliases
 
 - [PotMode](type-aliases/PotMode.md)
+- [PotObject](type-aliases/PotObject.md)
 - [ParamGroup](type-aliases/ParamGroup.md)
 - [SectionShape](type-aliases/SectionShape.md)
 - [NumericParamKey](type-aliases/NumericParamKey.md)

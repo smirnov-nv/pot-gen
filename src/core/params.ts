@@ -12,8 +12,11 @@
  * printing; `shell` is a real thin-walled pot with drainage. */
 export type PotMode = 'vase' | 'shell';
 
+/** Which model is generated, previewed and exported. */
+export type PotObject = 'pot' | 'tray';
+
 /** UI grouping for a parameter — drives the collapsible panel sections. */
-export type ParamGroup = 'shape' | 'flute' | 'rim' | 'mesh' | 'print' | 'shell';
+export type ParamGroup = 'shape' | 'flute' | 'rim' | 'mesh' | 'print' | 'shell' | 'tray';
 
 /**
  * Cross-section outline.
@@ -41,6 +44,8 @@ export interface Params {
   mode: PotMode;
   /** Cross-section outline. */
   shape: SectionShape;
+  /** Object the viewport, the metrics and the STL export refer to. */
+  object: PotObject;
 
   // -- shape ---------------------------------------------------------------
   /** Outer width across the rim along X, mm. */
@@ -107,10 +112,20 @@ export interface Params {
   slotWidth: number;
   /** Height of each slot, mm. */
   slotHeight: number;
+
+  // -- tray ----------------------------------------------------------------
+  /** Height of the tray wall, mm. */
+  trayHeight: number;
+  /** Tray wall and floor thickness, mm. */
+  trayWall: number;
+  /** Gap per side between the pot rim and the tray wall, mm. */
+  trayClearance: number;
+  /** Outward splay of the tray wall over its height, mm. Lets trays stack. */
+  trayFlare: number;
 }
 
 /** Keys of {@link Params} that carry a number. */
-export type NumericParamKey = Exclude<keyof Params, 'mode' | 'shape'>;
+export type NumericParamKey = Exclude<keyof Params, 'mode' | 'shape' | 'object'>;
 
 /** Outer half sizes of the section at the rim and at the base, mm. */
 export interface SectionSizes {
@@ -185,6 +200,7 @@ export interface ParamSpec {
 export const DEFAULT_PARAMS: Readonly<Params> = Object.freeze({
   mode: 'vase',
   shape: 'square',
+  object: 'pot',
 
   topSize: 90,
   bottomSize: 68,
@@ -220,6 +236,11 @@ export const DEFAULT_PARAMS: Readonly<Params> = Object.freeze({
   slots: 0,
   slotWidth: 3,
   slotHeight: 40,
+
+  trayHeight: 20,
+  trayWall: 2,
+  trayClearance: 0,
+  trayFlare: 3,
 });
 
 /**
@@ -265,6 +286,12 @@ export const PARAM_SCHEMA: readonly ParamSpec[] = [
   { key: 'slots', label: 'Щелей', unit: 'шт', min: 0, max: 16, step: 4, group: 'shell', description: 'вертикальные щели для воздушной обрезки корней', shellOnly: true },
   { key: 'slotWidth', label: 'Ширина щели', unit: 'мм', min: 1, max: 10, step: 0.5, group: 'shell', description: 'ширина щели', shellOnly: true },
   { key: 'slotHeight', label: 'Высота щели', unit: 'мм', min: 5, max: 200, step: 1, group: 'shell', description: 'высота щели', shellOnly: true },
+
+  // tray
+  { key: 'trayHeight', label: 'Высота бортика', unit: 'мм', min: 5, max: 60, step: 1, group: 'tray', description: 'высота бортика поддона' },
+  { key: 'trayWall', label: 'Толщина стенки', unit: 'мм', min: 0.8, max: 5, step: 0.1, group: 'tray', description: 'толщина стенки и дна поддона' },
+  { key: 'trayClearance', label: 'Зазор на сторону', unit: 'мм', min: 0, max: 40, step: 1, group: 'tray', description: 'зазор на сторону между кромкой горшка и стенкой поддона' },
+  { key: 'trayFlare', label: 'Развал стенок', unit: 'мм', min: 0, max: 15, step: 0.5, group: 'tray', description: 'развал стенок наружу, чтобы поддоны штабелировались' },
 ] as const;
 
 /** Russian titles of the parameter groups, in panel order. */
@@ -275,6 +302,7 @@ export const GROUP_TITLES: Readonly<Record<ParamGroup, string>> = Object.freeze(
   mesh: 'Сетка',
   print: 'Печать',
   shell: 'Shell-режим',
+  tray: 'Поддон',
 });
 
 /** Lookup of schema entries by key. */
@@ -387,7 +415,9 @@ export function sanitizeParams(raw: unknown): Params {
   if (typeof raw !== 'object' || raw === null) return out;
   const src = raw as Record<string, unknown>;
 
+  // Non-numeric fields are not in PARAM_SCHEMA — they are handled by hand.
   if (src['mode'] === 'shell' || src['mode'] === 'vase') out.mode = src['mode'];
+  if (src['object'] === 'pot' || src['object'] === 'tray') out.object = src['object'];
 
   const shape = src['shape'];
   if (shape === 'square' || shape === 'rect' || shape === 'circle' || shape === 'oval') {
@@ -425,6 +455,7 @@ export function encodeParams(params: Params): string {
   const parts: string[] = [];
   if (params.mode !== DEFAULT_PARAMS.mode) parts.push(`mode=${params.mode}`);
   if (params.shape !== DEFAULT_PARAMS.shape) parts.push(`shape=${params.shape}`);
+  if (params.object !== DEFAULT_PARAMS.object) parts.push(`object=${params.object}`);
   for (const spec of PARAM_SCHEMA) {
     const v = params[spec.key];
     if (v !== DEFAULT_PARAMS[spec.key]) parts.push(`${spec.key}=${v}`);
@@ -462,18 +493,29 @@ export function decodeParams(hash: string): Params {
 /**
  * Builds the STL file name from the parameters.
  *
+ * The tray is named by its inner footprint — the number that decides which pot
+ * fits into it — while the pot is named by its rim and its flute count.
+ *
  * @param params - parameter set being exported
- * @returns file name such as `pot_90x90x95_f32.stl`
+ * @returns file name such as `pot_90x90x95_f32.stl` or `tray_110x110x20.stl`
  *
  * @example
  * ```ts
  * import { DEFAULT_PARAMS, stlFileName } from '@core/params';
  * stlFileName(DEFAULT_PARAMS); // "pot_90x90x95_f32.stl"
+ * stlFileName({ ...DEFAULT_PARAMS, object: 'tray', trayClearance: 10 }); // "tray_110x110x20.stl"
  * ```
  */
 export function stlFileName(params: Params): string {
   const n = (v: number): string => String(Math.round(v));
   const sizes = sectionSizes(params);
+  if (params.object === 'tray') {
+    // Same inner-size rule as `trayDimensions` in core/tray; kept inline so the
+    // parameter module stays a leaf with no imports.
+    const innerX = n(sizes.topHalfX * 2 + 2 * params.trayClearance);
+    const innerY = n(sizes.topHalfY * 2 + 2 * params.trayClearance);
+    return `tray_${innerX}x${innerY}x${n(params.trayHeight)}.stl`;
+  }
   const base =
     `pot_${n(sizes.topHalfX * 2)}x${n(sizes.topHalfY * 2)}x${n(params.height)}` +
     `_f${n(params.flutes)}`;

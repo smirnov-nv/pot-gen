@@ -8,7 +8,7 @@
 
 > `const` **PARAM\_SCHEMA**: readonly [`ParamSpec`](../interfaces/ParamSpec.md)[]
 
-Defined in: params.ts:229
+Defined in: params.ts:250
 
 The parameter schema. Order matters: the UI and the generated README table
 both follow it.

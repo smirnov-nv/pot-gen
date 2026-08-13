@@ -8,7 +8,7 @@
 
 > **SectionShape** = `"square"` \| `"rect"` \| `"circle"` \| `"oval"`
 
-Defined in: params.ts:26
+Defined in: params.ts:29
 
 Cross-section outline.
 

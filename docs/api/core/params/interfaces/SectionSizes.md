@@ -6,7 +6,7 @@
 
 # Interface: SectionSizes
 
-Defined in: params.ts:116
+Defined in: params.ts:131
 
 Outer half sizes of the section at the rim and at the base, mm.
 
@@ -16,7 +16,7 @@ Outer half sizes of the section at the rim and at the base, mm.
 
 > **topHalfX**: `number`
 
-Defined in: params.ts:118
+Defined in: params.ts:133
 
 Half width at the rim along X.
 
@@ -26,7 +26,7 @@ Half width at the rim along X.
 
 > **topHalfY**: `number`
 
-Defined in: params.ts:120
+Defined in: params.ts:135
 
 Half width at the rim along Y.
 
@@ -36,7 +36,7 @@ Half width at the rim along Y.
 
 > **bottomHalfX**: `number`
 
-Defined in: params.ts:122
+Defined in: params.ts:137
 
 Half width at the base along X.
 
@@ -46,6 +46,6 @@ Half width at the base along X.
 
 > **bottomHalfY**: `number`
 
-Defined in: params.ts:124
+Defined in: params.ts:139
 
 Half width at the base along Y.

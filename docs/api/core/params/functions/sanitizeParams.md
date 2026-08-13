@@ -8,7 +8,7 @@
 
 > **sanitizeParams**(`raw`): [`Params`](../interfaces/Params.md)
 
-Defined in: params.ts:385
+Defined in: params.ts:413
 
 Normalises an arbitrary object into a valid parameter set.
 

@@ -8,7 +8,7 @@
 
 > **sectionSizes**(`p`): [`SectionSizes`](../interfaces/SectionSizes.md)
 
-Defined in: params.ts:143
+Defined in: params.ts:158
 
 Half sizes of the section, with the Y axis resolved.
 

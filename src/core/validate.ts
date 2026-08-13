@@ -28,6 +28,9 @@ export interface Warning {
   text: string;
 }
 
+/** Smallest gap per side that still lets a printed pot into a printed tray, mm. */
+const MIN_TRAY_CLEARANCE_MM = 10;
+
 /** Vertex budget above which the STL becomes unpleasant to handle. */
 const VERTEX_BUDGET = 500_000;
 
@@ -241,6 +244,25 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
       );
     }
   }
+  if (params.object === 'tray' && params.trayClearance < MIN_TRAY_CLEARANCE_MM) {
+    // The tray inherits the pot's section, so both axes are quoted: on an oval
+    // pot a single number would leave the reader guessing which one it is.
+    const rimX = sizes.topHalfX * 2;
+    const rimY = sizes.topHalfY * 2;
+    const pair = (extra: number): string =>
+      rimX === rimY ? `${rimX + extra}` : `${rimX + extra}×${rimY + extra}`;
+    add(
+      'tray-tight',
+      'warning',
+      `Зазор ${params.trayClearance} мм на сторону: внутренний размер поддона ` +
+        `${pair(2 * params.trayClearance)} мм при кромке горшка ${pair(0)} мм — поддон встаёт ` +
+        'вплотную к кромке и горшок в него не сядет. Развальцовка кромки, усадка PETG и разбег ' +
+        `печати по XY съедают эти доли миллиметра целиком. Дайте ${MIN_TRAY_CLEARANCE_MM}–30 мм ` +
+        `на сторону: поддон ${pair(2 * MIN_TRAY_CLEARANCE_MM)}–${pair(60)} мм, ` +
+        'и горшок будет вставать с запасом, а лишнее место уйдёт под воду.',
+    );
+  }
+
   // Vase mode has no drainage rule here on purpose: it is not a property of
   // one parameter set but of the mode, and it lives in VASE_MODE_NOTES.
 

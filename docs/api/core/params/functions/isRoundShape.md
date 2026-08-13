@@ -8,7 +8,7 @@
 
 > **isRoundShape**(`shape`): `boolean`
 
-Defined in: params.ts:29
+Defined in: params.ts:32
 
 True when the section is an ellipse rather than a rounded rectangle.
 

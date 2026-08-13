@@ -21,7 +21,7 @@ const README = fileURLToPath(new URL('../README.md', import.meta.url));
 const BEGIN = '<!-- BEGIN PARAMS -->';
 const END = '<!-- END PARAMS -->';
 
-const GROUP_ORDER: ParamGroup[] = ['shape', 'flute', 'rim', 'mesh', 'print', 'shell'];
+const GROUP_ORDER: ParamGroup[] = ['shape', 'flute', 'rim', 'mesh', 'print', 'shell', 'tray'];
 
 function table(): string {
   const lines: string[] = [];

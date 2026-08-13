@@ -8,7 +8,7 @@
 
 > **isPrintable**(`warnings`): `boolean`
 
-Defined in: validate.ts:264
+Defined in: validate.ts:286
 
 True when nothing blocks the print.
 

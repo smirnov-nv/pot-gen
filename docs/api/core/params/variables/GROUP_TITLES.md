@@ -8,6 +8,6 @@
 
 > `const` **GROUP\_TITLES**: `Readonly`\<`Record`\<[`ParamGroup`](../type-aliases/ParamGroup.md), `string`\>\>
 
-Defined in: params.ts:271
+Defined in: params.ts:298
 
 Russian titles of the parameter groups, in panel order.

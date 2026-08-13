@@ -6,7 +6,7 @@
 
 # Interface: Params
 
-Defined in: params.ts:39
+Defined in: params.ts:42
 
 Full parameter set of the generator.
 
@@ -16,7 +16,7 @@ Full parameter set of the generator.
 
 > **mode**: [`PotMode`](../type-aliases/PotMode.md)
 
-Defined in: params.ts:41
+Defined in: params.ts:44
 
 Generation mode.
 
@@ -26,9 +26,19 @@ Generation mode.
 
 > **shape**: [`SectionShape`](../type-aliases/SectionShape.md)
 
-Defined in: params.ts:43
+Defined in: params.ts:46
 
 Cross-section outline.
+
+***
+
+### object
+
+> **object**: [`PotObject`](../type-aliases/PotObject.md)
+
+Defined in: params.ts:48
+
+Object the viewport, the metrics and the STL export refer to.
 
 ***
 
@@ -36,7 +46,7 @@ Cross-section outline.
 
 > **topSize**: `number`
 
-Defined in: params.ts:47
+Defined in: params.ts:52
 
 Outer width across the rim along X, mm.
 
@@ -46,7 +56,7 @@ Outer width across the rim along X, mm.
 
 > **bottomSize**: `number`
 
-Defined in: params.ts:49
+Defined in: params.ts:54
 
 Outer width across the base along X, mm. Smaller than `topSize` => pots nest.
 
@@ -56,7 +66,7 @@ Outer width across the base along X, mm. Smaller than `topSize` => pots nest.
 
 > **topSizeY**: `number`
 
-Defined in: params.ts:51
+Defined in: params.ts:56
 
 Outer width across the rim along Y, mm. Ignored unless the shape is `rect`/`oval`.
 
@@ -66,7 +76,7 @@ Outer width across the rim along Y, mm. Ignored unless the shape is `rect`/`oval
 
 > **bottomSizeY**: `number`
 
-Defined in: params.ts:53
+Defined in: params.ts:58
 
 Outer width across the base along Y, mm. Ignored unless the shape is `rect`/`oval`.
 
@@ -76,7 +86,7 @@ Outer width across the base along Y, mm. Ignored unless the shape is `rect`/`ova
 
 > **height**: `number`
 
-Defined in: params.ts:55
+Defined in: params.ts:60
 
 Total height, mm.
 
@@ -86,7 +96,7 @@ Total height, mm.
 
 > **cornerR**: `number`
 
-Defined in: params.ts:57
+Defined in: params.ts:62
 
 Corner radius at the rim, mm. Scaled down with the section lower on.
 
@@ -96,7 +106,7 @@ Corner radius at the rim, mm. Scaled down with the section lower on.
 
 > **twist**: `number`
 
-Defined in: params.ts:59
+Defined in: params.ts:64
 
 Twist, degrees per mm of height. Non-zero breaks nesting.
 
@@ -106,7 +116,7 @@ Twist, degrees per mm of height. Non-zero breaks nesting.
 
 > **flutes**: `number`
 
-Defined in: params.ts:63
+Defined in: params.ts:68
 
 Number of sine waves around the perimeter. 0 = smooth.
 
@@ -116,7 +126,7 @@ Number of sine waves around the perimeter. 0 = smooth.
 
 > **fluteAmp**: `number`
 
-Defined in: params.ts:65
+Defined in: params.ts:70
 
 Radial amplitude of the fluting at the rim, mm.
 
@@ -126,7 +136,7 @@ Radial amplitude of the fluting at the rim, mm.
 
 > **rimH**: `number`
 
-Defined in: params.ts:69
+Defined in: params.ts:74
 
 Height of the flared lip, mm.
 
@@ -136,7 +146,7 @@ Height of the flared lip, mm.
 
 > **rimFlare**: `number`
 
-Defined in: params.ts:71
+Defined in: params.ts:76
 
 Extra outward offset at the very top, mm.
 
@@ -146,7 +156,7 @@ Extra outward offset at the very top, mm.
 
 > **seg**: `number`
 
-Defined in: params.ts:75
+Defined in: params.ts:80
 
 Points per cross-section.
 
@@ -156,7 +166,7 @@ Points per cross-section.
 
 > **dz**: `number`
 
-Defined in: params.ts:77
+Defined in: params.ts:82
 
 Vertical sampling step, mm.
 
@@ -166,7 +176,7 @@ Vertical sampling step, mm.
 
 > **nozzle**: `number`
 
-Defined in: params.ts:81
+Defined in: params.ts:86
 
 Nozzle diameter, mm.
 
@@ -176,7 +186,7 @@ Nozzle diameter, mm.
 
 > **wallWidth**: `number`
 
-Defined in: params.ts:83
+Defined in: params.ts:88
 
 Extrusion width — in vase mode this *is* the wall thickness, mm.
 
@@ -186,7 +196,7 @@ Extrusion width — in vase mode this *is* the wall thickness, mm.
 
 > **layerH**: `number`
 
-Defined in: params.ts:85
+Defined in: params.ts:90
 
 Layer height, mm.
 
@@ -196,7 +206,7 @@ Layer height, mm.
 
 > **bottomLayers**: `number`
 
-Defined in: params.ts:87
+Defined in: params.ts:92
 
 Number of solid bottom layers.
 
@@ -206,7 +216,7 @@ Number of solid bottom layers.
 
 > **density**: `number`
 
-Defined in: params.ts:89
+Defined in: params.ts:94
 
 Filament density, g/cm³.
 
@@ -216,7 +226,7 @@ Filament density, g/cm³.
 
 > **speed**: `number`
 
-Defined in: params.ts:91
+Defined in: params.ts:96
 
 Effective print speed for the time estimate, mm/s.
 
@@ -226,7 +236,7 @@ Effective print speed for the time estimate, mm/s.
 
 > **pricePerGram**: `number`
 
-Defined in: params.ts:93
+Defined in: params.ts:98
 
 Filament price, ₽ per gram.
 
@@ -236,7 +246,7 @@ Filament price, ₽ per gram.
 
 > **wallThickness**: `number`
 
-Defined in: params.ts:97
+Defined in: params.ts:102
 
 Wall thickness in shell mode, mm.
 
@@ -246,7 +256,7 @@ Wall thickness in shell mode, mm.
 
 > **bottomThickness**: `number`
 
-Defined in: params.ts:99
+Defined in: params.ts:104
 
 Bottom thickness in shell mode, mm.
 
@@ -256,7 +266,7 @@ Bottom thickness in shell mode, mm.
 
 > **drainHoles**: `number`
 
-Defined in: params.ts:101
+Defined in: params.ts:106
 
 Number of drainage holes in the bottom (shell mode).
 
@@ -266,7 +276,7 @@ Number of drainage holes in the bottom (shell mode).
 
 > **drainDia**: `number`
 
-Defined in: params.ts:103
+Defined in: params.ts:108
 
 Diameter of each drainage hole, mm.
 
@@ -276,7 +286,7 @@ Diameter of each drainage hole, mm.
 
 > **slots**: `number`
 
-Defined in: params.ts:105
+Defined in: params.ts:110
 
 Number of vertical air-pruning slots (shell mode). 0 = none.
 
@@ -286,7 +296,7 @@ Number of vertical air-pruning slots (shell mode). 0 = none.
 
 > **slotWidth**: `number`
 
-Defined in: params.ts:107
+Defined in: params.ts:112
 
 Width of each slot, mm.
 
@@ -296,6 +306,46 @@ Width of each slot, mm.
 
 > **slotHeight**: `number`
 
-Defined in: params.ts:109
+Defined in: params.ts:114
 
 Height of each slot, mm.
+
+***
+
+### trayHeight
+
+> **trayHeight**: `number`
+
+Defined in: params.ts:118
+
+Height of the tray wall, mm.
+
+***
+
+### trayWall
+
+> **trayWall**: `number`
+
+Defined in: params.ts:120
+
+Tray wall and floor thickness, mm.
+
+***
+
+### trayClearance
+
+> **trayClearance**: `number`
+
+Defined in: params.ts:122
+
+Gap per side between the pot rim and the tray wall, mm.
+
+***
+
+### trayFlare
+
+> **trayFlare**: `number`
+
+Defined in: params.ts:124
+
+Outward splay of the tray wall over its height, mm. Lets trays stack.

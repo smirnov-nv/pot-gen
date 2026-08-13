@@ -8,7 +8,7 @@
 
 > **validate**(`params`, `metrics?`): [`Warning`](../interfaces/Warning.md)[]
 
-Defined in: validate.ts:85
+Defined in: validate.ts:88
 
 Runs every rule against a parameter set.
 

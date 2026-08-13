@@ -8,7 +8,7 @@
 
 > **clampParam**(`key`, `value`): `number`
 
-Defined in: params.ts:359
+Defined in: params.ts:387
 
 Clamps a value into the schema range and snaps it to the step grid.
 

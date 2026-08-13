@@ -20,6 +20,7 @@ import {
   sectionOutline,
   superellipse,
 } from '../src/core/profile';
+import { buildTrayMesh, trayDimensions } from '../src/core/tray';
 import { validate } from '../src/core/validate';
 
 /**
@@ -212,6 +213,29 @@ describe('validation', () => {
     expect(validate(shaped('square', 90, 90, patch)).some((w) => w.id === 'corner-collapse')).toBe(
       true,
     );
+  });
+});
+
+describe('tray', () => {
+  it('inherits the section of the pot it has to hold', () => {
+    const p = shaped('oval', 140, 70, { object: 'tray', trayClearance: 10 });
+    const d = trayDimensions(p);
+    expect(d.innerWidth).toBe(160);
+    expect(d.innerWidthY).toBe(90);
+
+    const b = meshBounds(buildTrayMesh(p));
+    // Widest at the top of the flared wall: inner + wall + flare on each side.
+    const outerTop = (w: number): number => w + 2 * (p.trayWall + p.trayFlare);
+    expect(b.max[0]! - b.min[0]!).toBeCloseTo(outerTop(160), 1);
+    expect(b.max[1]! - b.min[1]!).toBeCloseTo(outerTop(90), 1);
+    expect(unmatchedEdges(buildTrayMesh(p))).toBe(0);
+  });
+
+  it('quotes both axes in the clearance warning', () => {
+    const w = validate(shaped('rect', 140, 70, { object: 'tray', trayClearance: 0 })).find(
+      (x) => x.id === 'tray-tight',
+    );
+    expect(w?.text).toContain('140×70');
   });
 });
 
