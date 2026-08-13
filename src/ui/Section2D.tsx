@@ -26,7 +26,7 @@ function contourPath(pts: Float64Array): string {
   return `${d}Z`;
 }
 
-/** Outer envelope radius of a ring — what a silhouette actually shows. */
+/** Outer envelope radius of a ring — the widest point in any direction. */
 function envelope(ring: Ring): number {
   let r = 0;
   for (let i = 0; i < ring.pts.length; i += 2) {
@@ -35,11 +35,90 @@ function envelope(ring: Ring): number {
   return r;
 }
 
+/** Half extents of a ring along each axis, mm. */
+function extents(ring: Ring): { x: number; y: number } {
+  let x = 0;
+  let y = 0;
+  for (let i = 0; i < ring.pts.length; i += 2) {
+    x = Math.max(x, Math.abs(ring.pts[i]!));
+    y = Math.max(y, Math.abs(ring.pts[i + 1]!));
+  }
+  return { x, y };
+}
+
+/** Millimetres as the views label them: whole numbers, no trailing noise. */
+function mm(v: number): string {
+  return v.toFixed(v < 10 ? 1 : 0);
+}
+
+/** Colour of the dimension lines and their labels. */
+const DIM = '#64748b';
+
+/**
+ * One dimension line with end ticks and a centred label.
+ *
+ * Horizontal spans `from`…`to` at `at`; vertical spans them at `x = at`. All
+ * coordinates are already in SVG space (y down), so the callers negate.
+ */
+function Dimension({
+  axis,
+  from,
+  to,
+  at,
+  label,
+  size,
+}: {
+  axis: 'x' | 'y';
+  from: number;
+  to: number;
+  at: number;
+  label: string;
+  size: number;
+}) {
+  const horizontal = axis === 'x';
+  const tick = size * 0.4;
+  const [x1, y1, x2, y2] = horizontal ? [from, at, to, at] : [at, from, at, to];
+
+  return (
+    <g stroke={DIM} strokeWidth={size / 12} fill="none">
+      <line x1={x1} y1={y1} x2={x2} y2={y2} />
+      {horizontal ? (
+        <>
+          <line x1={from} y1={at - tick} x2={from} y2={at + tick} />
+          <line x1={to} y1={at - tick} x2={to} y2={at + tick} />
+        </>
+      ) : (
+        <>
+          <line x1={at - tick} y1={from} x2={at + tick} y2={from} />
+          <line x1={at - tick} y1={to} x2={at + tick} y2={to} />
+        </>
+      )}
+      <text
+        x={horizontal ? (from + to) / 2 : at}
+        y={(horizontal ? at : (from + to) / 2) - tick * 0.8}
+        // Vertical dimensions read along their own line: centred text would
+        // otherwise sit right on top of it.
+        transform={horizontal ? undefined : `rotate(-90 ${at} ${(from + to) / 2})`}
+        fill={DIM}
+        stroke="none"
+        fontSize={size}
+        textAnchor="middle"
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
+
 function TopView({ params, rings }: Props) {
   const bottom = rings[0]!;
   const top = rings[rings.length - 1]!;
-  const half = envelope(top) * 1.08;
+  // Room above and to the right for the dimension lines.
+  const half = envelope(top) * 1.22;
   const holes = drainPoints(params);
+  const rim = extents(top);
+  const base = extents(bottom);
+  const size = half / 11;
 
   return (
     <figure className="flex min-h-0 flex-1 flex-col">
@@ -65,10 +144,30 @@ function TopView({ params, rings }: Props) {
             <circle cx={h.x} cy={-h.y} r={half / 120} fill="#f06060" />
           </g>
         ))}
+        <Dimension
+          axis="x"
+          from={-rim.x}
+          to={rim.x}
+          at={-half * 0.86}
+          label={`${mm(rim.x * 2)} мм`}
+          size={size}
+        />
+        <Dimension
+          axis="y"
+          from={-rim.y}
+          to={rim.y}
+          at={half * 0.86}
+          label={`${mm(rim.y * 2)} мм`}
+          size={size}
+        />
       </svg>
-      <div className="mt-1 flex gap-3 text-[11px] text-slate-500">
-        <span className="text-[#8ea6c0]">— кромка</span>
-        <span className="text-[#f0a860]">- - дно</span>
+      <div className="mt-1 flex flex-wrap gap-3 text-[11px] text-slate-500">
+        <span className="text-[#8ea6c0]">
+          — кромка {mm(rim.x * 2)}×{mm(rim.y * 2)}
+        </span>
+        <span className="text-[#f0a860]">
+          - - дно {mm(base.x * 2)}×{mm(base.y * 2)}
+        </span>
         {holes.length > 0 && (
           <span className="text-[#f06060]">
             ● дренаж {params.mode === 'vase' ? '(бить гвоздём после печати)' : '(в модели)'}
@@ -80,9 +179,13 @@ function TopView({ params, rings }: Props) {
 }
 
 function SideView({ params, rings }: Props) {
-  const radii = rings.map(envelope);
-  const maxR = Math.max(...radii) * 1.08;
+  // Seen from +Y, so the silhouette is the X extent of every ring. The
+  // envelope radius would draw the diagonal of the section instead — wider
+  // than the pot ever is from this side, and it would not match the label.
+  const radii = rings.map((r) => extents(r).x);
+  const maxR = Math.max(...radii) * 1.25;
   const h = params.height;
+  const size = h / 13;
 
   const right = rings.map((r, i) => `${radii[i]!.toFixed(3)} ${(h - r.z).toFixed(3)}`);
   const left = [...rings].reverse().map((r, i) => {
@@ -103,10 +206,27 @@ function SideView({ params, rings }: Props) {
         <line x1={-maxR} y1={h} x2={maxR} y2={h} stroke="#3b4250" strokeWidth={h / 400} />
         <path d={silhouette} fill="#8ea6c022" stroke="#8ea6c0" strokeWidth={h / 300} />
         <path d={`M${section.join('L')}`} fill="none" stroke="#f0a860" strokeWidth={h / 350} />
+        <Dimension
+          axis="y"
+          from={0}
+          to={h}
+          at={-maxR * 0.88}
+          label={`${mm(h)} мм`}
+          size={size}
+        />
+        <Dimension
+          axis="x"
+          from={-radii[rings.length - 1]!}
+          to={radii[rings.length - 1]!}
+          at={-h * 0.02}
+          label={`${mm(radii[rings.length - 1]! * 2)} мм`}
+          size={size}
+        />
       </svg>
-      <div className="mt-1 flex gap-3 text-[11px] text-slate-500">
-        <span className="text-[#8ea6c0]">— огибающая (гребни гофра)</span>
+      <div className="mt-1 flex flex-wrap gap-3 text-[11px] text-slate-500">
+        <span className="text-[#8ea6c0]">— огибающая по X (гребни гофра)</span>
         <span className="text-[#f0a860]">— сечение по оси X</span>
+        <span>высота {mm(h)}</span>
       </div>
     </figure>
   );

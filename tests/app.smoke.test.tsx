@@ -126,6 +126,28 @@ describe('App', () => {
     expect(mount({ bottomSize: 120 })).toContain('обратный конус');
   });
 
+  it('dimensions the 2D views per axis', () => {
+    const html = mount({
+      shape: 'rect',
+      topSize: 140,
+      topSizeY: 70,
+      bottomSize: 118,
+      bottomSizeY: 48,
+      height: 120,
+      // Smooth wall: the fluting would push the rim label off the round number.
+      flutes: 0,
+      fluteAmp: 0,
+      rimH: 0,
+      rimFlare: 0,
+    });
+
+    expect(html).toContain('140 мм');
+    expect(html).toContain('70 мм');
+    expect(html).toContain('120 мм');
+    expect(html).toContain('кромка 140×70');
+    expect(html).toContain('дно 118×48');
+  });
+
   it('marks the drainage points on the bottom view', () => {
     expect(mount()).toContain('дренаж');
   });
