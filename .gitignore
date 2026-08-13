@@ -39,3 +39,6 @@ __pycache__/
 ### JetBrains local project files ###
 .idea/
 *.iml
+
+### Claude Code worktrees ###
+.claude/worktrees/
