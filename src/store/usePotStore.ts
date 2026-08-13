@@ -15,6 +15,7 @@ import {
   type NumericParamKey,
   type Params,
   type PotMode,
+  type PotObject,
   type Preset,
   clampParam,
   decodeParams,
@@ -49,6 +50,8 @@ interface PotStore {
   setParam: (key: NumericParamKey, value: number) => void;
   /** Switches generation mode. */
   setMode: (mode: PotMode) => void;
+  /** Switches the object being previewed and exported: pot or tray. */
+  setObject: (object: PotObject) => void;
   /** Replaces the whole parameter set (preset, import, shared link). */
   setParams: (params: Params) => void;
   /** Restores defaults. */
@@ -109,6 +112,12 @@ export const usePotStore = create<PotStore>()(
         set((state) => ({
           ...pushHistory(state, 'mode'),
           params: { ...state.params, mode },
+        })),
+
+      setObject: (object) =>
+        set((state) => ({
+          ...pushHistory(state, 'object'),
+          params: { ...state.params, object },
         })),
 
       setParams: (params) =>

@@ -11,6 +11,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { computeMetrics } from '../core/metrics';
 import { stlFileName } from '../core/params';
 import { buildRings } from '../core/profile';
+import { trayMetrics } from '../core/tray';
 import { validate } from '../core/validate';
 import { usePotStore } from '../store/usePotStore';
 import { MetricsPanel } from './MetricsPanel';
@@ -40,6 +41,7 @@ export function App() {
   const view = usePotStore((s) => s.view);
   const setParam = usePotStore((s) => s.setParam);
   const setMode = usePotStore((s) => s.setMode);
+  const setObject = usePotStore((s) => s.setObject);
   const setParams = usePotStore((s) => s.setParams);
   const setView = usePotStore((s) => s.setView);
   const undo = usePotStore((s) => s.undo);
@@ -58,6 +60,8 @@ export function App() {
   const rings = useMemo(() => buildRings(params), [params]);
   const metrics = useMemo(() => computeMetrics(params, rings), [params, rings]);
   const warnings = useMemo(() => validate(params, metrics), [params, metrics]);
+  const tray = useMemo(() => trayMetrics(params), [params]);
+  const isTray = params.object === 'tray';
 
   const exportSTL = useCallback(async () => {
     setExportError(null);
@@ -74,6 +78,32 @@ export function App() {
         <h1 className="text-sm font-semibold text-slate-100">Генератор горшков</h1>
 
         <div className="flex overflow-hidden rounded border border-edge text-xs">
+          {(['pot', 'tray'] as const).map((o) => (
+            <button
+              key={o}
+              className={`px-2.5 py-1 ${
+                params.object === o ? 'bg-emerald-700 text-white' : 'bg-panelalt text-slate-300'
+              }`}
+              onClick={() => setObject(o)}
+              title={
+                o === 'pot'
+                  ? 'Сам горшок'
+                  : 'Неглубокий поддон под горшок: сплошное дно, без дренажа'
+              }
+            >
+              {o === 'pot' ? 'Горшок' : 'Поддон'}
+            </button>
+          ))}
+        </div>
+
+        {/* The mode is a property of the pot; the tray is printed as an
+            ordinary object either way, so the toggle greys out with it. */}
+        <div
+          className={`flex overflow-hidden rounded border border-edge text-xs ${
+            isTray ? 'opacity-40' : ''
+          }`}
+          title={isTray ? 'Режим относится к горшку, поддон печатается как обычная модель' : undefined}
+        >
           {(['vase', 'shell'] as const).map((m) => (
             <button
               key={m}
@@ -166,8 +196,8 @@ export function App() {
             <Viewport3D
               positions={mesh.positions}
               view={view}
-              height={params.height}
-              width={params.topSize}
+              height={isTray ? tray.height : params.height}
+              width={isTray ? tray.outerWidth : params.topSize}
             />
           ) : (
             <Section2D params={params} rings={rings} />
@@ -186,8 +216,13 @@ export function App() {
         </main>
 
         <aside className="w-80 shrink-0 overflow-y-auto border-l border-edge bg-panel">
-          <MetricsPanel metrics={metrics} params={params} triangleCount={mesh.triangleCount} />
-          <WarningsPanel warnings={warnings} showVaseNotes={params.mode === 'vase'} />
+          <MetricsPanel
+            metrics={metrics}
+            params={params}
+            triangleCount={mesh.triangleCount}
+            tray={tray}
+          />
+          <WarningsPanel warnings={warnings} showVaseNotes={!isTray && params.mode === 'vase'} />
           <SlicerHints params={params} metrics={metrics} />
         </aside>
       </div>

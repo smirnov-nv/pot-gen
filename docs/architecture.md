@@ -26,6 +26,7 @@ flowchart TB
     P[profile.ts]
     M[mesh.ts]
     SH[shell.ts]
+    TR[tray.ts]
     PG[polygon.ts]
     B[build.ts]
     ST[stl.ts]
@@ -44,6 +45,7 @@ flowchart TB
 
   W --> B --> M
   B --> SH --> PG
+  B --> TR --> M
   SH --> DR
   P --> M
   W --> ST

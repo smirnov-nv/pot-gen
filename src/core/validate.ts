@@ -26,6 +26,9 @@ export interface Warning {
   text: string;
 }
 
+/** Smallest gap per side that still lets a printed pot into a printed tray, mm. */
+const MIN_TRAY_CLEARANCE_MM = 10;
+
 /** Vertex budget above which the STL becomes unpleasant to handle. */
 const VERTEX_BUDGET = 500_000;
 
@@ -214,6 +217,20 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
       );
     }
   }
+  if (params.object === 'tray' && params.trayClearance < MIN_TRAY_CLEARANCE_MM) {
+    const inner = params.topSize + 2 * params.trayClearance;
+    add(
+      'tray-tight',
+      'warning',
+      `Зазор ${params.trayClearance} мм на сторону: внутренний размер поддона ${inner} мм ` +
+        `при кромке горшка ${params.topSize} мм — поддон встаёт вплотную к кромке и горшок в него ` +
+        'не сядет. Развальцовка кромки, усадка PETG и разбег печати по XY съедают эти доли ' +
+        `миллиметра целиком. Дайте ${MIN_TRAY_CLEARANCE_MM}–30 мм на сторону: ` +
+        `поддон ${params.topSize + 2 * MIN_TRAY_CLEARANCE_MM}–${params.topSize + 60} мм, ` +
+        'и горшок будет вставать с запасом, а лишнее место уйдёт под воду.',
+    );
+  }
+
   // Vase mode has no drainage rule here on purpose: it is not a property of
   // one parameter set but of the mode, and it lives in VASE_MODE_NOTES.
 

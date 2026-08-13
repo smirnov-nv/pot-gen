@@ -100,6 +100,21 @@ describe('App', () => {
     expect(html).toContain('Стенок / заполнение');
   });
 
+  it('marks the tray group unavailable while the pot is selected', () => {
+    expect(mount()).toContain('(только для поддона)');
+  });
+
+  it('switches preview, metrics and warnings over to the tray', () => {
+    const html = mount({ object: 'tray', trayClearance: 0 });
+    expect(html).toContain('Метрики поддона');
+    expect(html).toContain('Ёмкость');
+    // The vase-mode notes are about the pot and say nothing about a tray.
+    expect(html).not.toContain('Ограничения режима вазы');
+    expect(html).not.toContain('(только для поддона)');
+    // Zero clearance is exactly what `tray-tight` is there to catch.
+    expect(html).toContain('не сядет');
+  });
+
   it('surfaces validation errors for an impossible pot', () => {
     expect(mount({ bottomSize: 120 })).toContain('обратный конус');
   });

@@ -16,7 +16,10 @@ describe('schema', () => {
     const keys = PARAM_SCHEMA.map((s) => s.key);
     expect(new Set(keys).size).toBe(keys.length);
 
-    const paramKeys = Object.keys(DEFAULT_PARAMS).filter((k) => k !== 'mode');
+    // Non-numeric fields (mode, object) live outside the schema by design.
+    const paramKeys = Object.keys(DEFAULT_PARAMS).filter(
+      (k) => typeof DEFAULT_PARAMS[k as keyof typeof DEFAULT_PARAMS] === 'number',
+    );
     expect([...keys].sort()).toEqual(paramKeys.sort());
   });
 
