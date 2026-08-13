@@ -12,14 +12,54 @@ import { useState } from 'react';
 import {
   GROUP_TITLES,
   PARAM_SCHEMA,
+  isAnisotropicShape,
   type ParamGroup,
   type ParamSpec,
   type Params,
+  type SectionShape,
 } from '../core/params';
 
 interface Props {
   params: Params;
   onChange: (key: ParamSpec['key'], value: number) => void;
+  onShapeChange: (shape: SectionShape) => void;
+}
+
+/** Section shapes in display order, with their Russian labels. */
+const SHAPES: readonly (readonly [SectionShape, string, string])[] = [
+  ['square', 'Квадрат', 'квадрат со скруглёнными углами — классический рассадный горшок'],
+  ['rect', 'Прямоугольник', 'разные размеры по X и Y, углы скруглены'],
+  ['circle', 'Круг', 'круглое сечение; радиус угла не применяется'],
+  ['oval', 'Овал', 'эллипс с разными полуосями; радиус угла не применяется'],
+];
+
+/** Segmented control choosing the cross-section outline. */
+function ShapePicker({
+  shape,
+  onChange,
+}: {
+  shape: SectionShape;
+  onChange: (s: SectionShape) => void;
+}) {
+  return (
+    <div className="px-3 py-1.5">
+      <span className="mb-1 block text-[10px] uppercase tracking-wide text-slate-500">Сечение</span>
+      <div className="grid grid-cols-4 overflow-hidden rounded border border-edge text-[11px]">
+        {SHAPES.map(([key, label, title]) => (
+          <button
+            key={key}
+            title={title}
+            className={`px-1 py-1 ${
+              shape === key ? 'bg-sky-600 text-white' : 'bg-panelalt text-slate-300'
+            }`}
+            onClick={() => onChange(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /** Panel sections in display order. */
@@ -89,10 +129,16 @@ function Section({
   group,
   params,
   onChange,
+  onShapeChange,
   disabled,
 }: Props & { group: ParamGroup; disabled: boolean }) {
   const [open, setOpen] = useState(group !== 'mesh' && group !== 'shell');
-  const specs = PARAM_SCHEMA.filter((s) => s.group === group);
+  // The Y sizes exist for every shape but only mean something on the ones with
+  // two independent axes; showing them under "Круг" would invite editing a
+  // number that changes nothing.
+  const specs = PARAM_SCHEMA.filter(
+    (s) => s.group === group && (!s.axisY || isAnisotropicShape(params.shape)),
+  );
 
   return (
     <section className="border-b border-edge">
@@ -109,6 +155,7 @@ function Section({
       </button>
       {open && (
         <div className={disabled ? 'pointer-events-none pb-2 opacity-40' : 'pb-2'}>
+          {group === 'shape' && <ShapePicker shape={params.shape} onChange={onShapeChange} />}
           {specs.map((spec) => (
             <Field
               key={spec.key}
@@ -129,7 +176,7 @@ function Section({
  * @param props - current parameters and the change handler
  * @returns the panel element
  */
-export function ParamPanel({ params, onChange }: Props) {
+export function ParamPanel({ params, onChange, onShapeChange }: Props) {
   return (
     <div className="h-full overflow-y-auto bg-panel">
       {GROUP_ORDER.map((group) => (
@@ -138,6 +185,7 @@ export function ParamPanel({ params, onChange }: Props) {
           group={group}
           params={params}
           onChange={onChange}
+          onShapeChange={onShapeChange}
           disabled={group === 'shell' && params.mode !== 'shell'}
         />
       ))}

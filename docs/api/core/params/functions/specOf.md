@@ -8,7 +8,7 @@
 
 > **specOf**(`key`): [`ParamSpec`](../interfaces/ParamSpec.md)
 
-Defined in: params.ts:224
+Defined in: params.ts:299
 
 Schema entry for a parameter.
 

@@ -8,7 +8,7 @@
 
 > **buildShellMesh**(`p`): [`Mesh`](../../mesh/interfaces/Mesh.md)
 
-Defined in: shell.ts:152
+Defined in: shell.ts:170
 
 Builds the shell-mode mesh.
 

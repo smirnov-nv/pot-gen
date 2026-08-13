@@ -16,6 +16,10 @@ nail after a vase-mode print.
 
 - [DrainPoint](interfaces/DrainPoint.md)
 
+## Type Aliases
+
+- [DrainParams](type-aliases/DrainParams.md)
+
 ## Functions
 
 - [drainRingRadius](functions/drainRingRadius.md)

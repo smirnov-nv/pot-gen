@@ -15,6 +15,7 @@ round-trips through it. Adding a parameter anywhere else is a bug.
 ## Interfaces
 
 - [Params](interfaces/Params.md)
+- [SectionSizes](interfaces/SectionSizes.md)
 - [ParamSpec](interfaces/ParamSpec.md)
 - [Preset](interfaces/Preset.md)
 
@@ -22,6 +23,7 @@ round-trips through it. Adding a parameter anywhere else is a bug.
 
 - [PotMode](type-aliases/PotMode.md)
 - [ParamGroup](type-aliases/ParamGroup.md)
+- [SectionShape](type-aliases/SectionShape.md)
 - [NumericParamKey](type-aliases/NumericParamKey.md)
 
 ## Variables
@@ -33,6 +35,9 @@ round-trips through it. Adding a parameter anywhere else is a bug.
 
 ## Functions
 
+- [isRoundShape](functions/isRoundShape.md)
+- [isAnisotropicShape](functions/isAnisotropicShape.md)
+- [sectionSizes](functions/sectionSizes.md)
 - [specOf](functions/specOf.md)
 - [clampParam](functions/clampParam.md)
 - [sanitizeParams](functions/sanitizeParams.md)

@@ -9,7 +9,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { computeMetrics } from '../core/metrics';
-import { stlFileName } from '../core/params';
+import { sectionSizes, stlFileName } from '../core/params';
 import { buildRings } from '../core/profile';
 import { validate } from '../core/validate';
 import { usePotStore } from '../store/usePotStore';
@@ -40,6 +40,7 @@ export function App() {
   const view = usePotStore((s) => s.view);
   const setParam = usePotStore((s) => s.setParam);
   const setMode = usePotStore((s) => s.setMode);
+  const setShape = usePotStore((s) => s.setShape);
   const setParams = usePotStore((s) => s.setParams);
   const setView = usePotStore((s) => s.setView);
   const undo = usePotStore((s) => s.undo);
@@ -56,6 +57,7 @@ export function App() {
   // Rings are cheap next to the full mesh and are needed by both the metrics
   // and the 2D views, so they are built once here rather than in each.
   const rings = useMemo(() => buildRings(params), [params]);
+  const sizes = useMemo(() => sectionSizes(params), [params]);
   const metrics = useMemo(() => computeMetrics(params, rings), [params, rings]);
   const warnings = useMemo(() => validate(params, metrics), [params, metrics]);
 
@@ -158,7 +160,7 @@ export function App() {
 
       <div className="flex min-h-0 flex-1">
         <aside className="w-72 shrink-0 border-r border-edge">
-          <ParamPanel params={params} onChange={setParam} />
+          <ParamPanel params={params} onChange={setParam} onShapeChange={setShape} />
         </aside>
 
         <main className="relative min-w-0 flex-1">
@@ -167,7 +169,9 @@ export function App() {
               positions={mesh.positions}
               view={view}
               height={params.height}
-              width={params.topSize}
+              // Framing follows the larger footprint, otherwise a long oval
+              // runs off the sides of the viewport.
+              width={2 * Math.max(sizes.topHalfX, sizes.topHalfY)}
             />
           ) : (
             <Section2D params={params} rings={rings} />

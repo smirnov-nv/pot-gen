@@ -8,7 +8,7 @@
 
 > **ringCount**(`p`): `number`
 
-Defined in: profile.ts:278
+Defined in: profile.ts:415
 
 Points per section, as the mesh actually uses it.
 

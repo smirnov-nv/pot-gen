@@ -8,7 +8,7 @@
 
 > **decodeParams**(`hash`): [`Params`](../interfaces/Params.md)
 
-Defined in: params.ts:369
+Defined in: params.ts:450
 
 Decodes a URL hash payload produced by [encodeParams](encodeParams.md).
 

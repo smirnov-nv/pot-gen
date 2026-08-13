@@ -6,7 +6,7 @@
 
 # Interface: Preset
 
-Defined in: params.ts:231
+Defined in: params.ts:306
 
 A named parameter set.
 
@@ -16,7 +16,7 @@ A named parameter set.
 
 > **id**: `string`
 
-Defined in: params.ts:233
+Defined in: params.ts:308
 
 Stable id used in the URL and in localStorage.
 
@@ -26,7 +26,7 @@ Stable id used in the URL and in localStorage.
 
 > **name**: `string`
 
-Defined in: params.ts:235
+Defined in: params.ts:310
 
 Russian display name.
 
@@ -36,6 +36,6 @@ Russian display name.
 
 > **params**: [`Params`](Params.md)
 
-Defined in: params.ts:237
+Defined in: params.ts:312
 
 Full parameter set.

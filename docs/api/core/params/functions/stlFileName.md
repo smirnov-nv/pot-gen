@@ -8,7 +8,7 @@
 
 > **stlFileName**(`params`): `string`
 
-Defined in: params.ts:393
+Defined in: params.ts:474
 
 Builds the STL file name from the parameters.
 

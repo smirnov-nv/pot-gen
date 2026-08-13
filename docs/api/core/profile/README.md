@@ -21,6 +21,7 @@ tuples cost an allocation each.
 ## Interfaces
 
 - [Ring](interfaces/Ring.md)
+- [SectionSpec](interfaces/SectionSpec.md)
 - [RingGeometry](interfaces/RingGeometry.md)
 
 ## Type Aliases
@@ -30,8 +31,10 @@ tuples cost an allocation each.
 ## Functions
 
 - [superellipse](functions/superellipse.md)
+- [sectionOutline](functions/sectionOutline.md)
 - [resampleByArcLength](functions/resampleByArcLength.md)
 - [baseProfile](functions/baseProfile.md)
+- [sectionProfile](functions/sectionProfile.md)
 - [buildRings](functions/buildRings.md)
 - [ringGeometryAt](functions/ringGeometryAt.md)
 - [ringCount](functions/ringCount.md)

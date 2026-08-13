@@ -37,5 +37,5 @@ coverage/
 __pycache__/
 
 ### JetBrains local project files ###
-.idea/misc.xml
+.idea/
 *.iml

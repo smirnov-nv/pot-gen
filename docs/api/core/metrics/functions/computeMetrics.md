@@ -8,7 +8,7 @@
 
 > **computeMetrics**(`params`, `rings?`): [`Metrics`](../interfaces/Metrics.md)
 
-Defined in: metrics.ts:140
+Defined in: metrics.ts:141
 
 Computes every metric for a parameter set.
 

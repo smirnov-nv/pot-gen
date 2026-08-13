@@ -8,7 +8,7 @@
 
 > **drainRingRadius**(`params`): `number`
 
-Defined in: drainage.ts:36
+Defined in: drainage.ts:46
 
 Radius of the circle the holes sit on.
 
@@ -16,13 +16,16 @@ Half way out from the axis: close enough to the middle that water finds
 them, far enough from the wall that the fillet between wall and bottom is
 not cut through.
 
+On an elongated bottom this is the narrow axis: it is the one that decides
+whether a hole still clears the wall.
+
 ## Parameters
 
 ### params
 
-`Pick`\<[`Params`](../../params/interfaces/Params.md), `"bottomSize"`\>
+`Omit`\<[`DrainParams`](../type-aliases/DrainParams.md), `"drainHoles"`\>
 
-parameters carrying `bottomSize`
+parameters carrying the shape and the base sizes
 
 ## Returns
 

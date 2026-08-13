@@ -8,7 +8,7 @@
 
 > **baseProfile**(`halfSize`, `cornerR`, `flutes`, `fluteAmp`, `seg`): `Float64Array`
 
-Defined in: profile.ts:142
+Defined in: profile.ts:190
 
 One cross-section: resampled rounded square with the fluting applied along
 the outward normal.

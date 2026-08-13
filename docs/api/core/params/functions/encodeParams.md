@@ -8,7 +8,7 @@
 
 > **encodeParams**(`params`): `string`
 
-Defined in: params.ts:344
+Defined in: params.ts:424
 
 Encodes parameters into a URL hash payload.
 

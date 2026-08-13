@@ -8,7 +8,7 @@
 
 > `const` **VASE\_MODE\_NOTES**: readonly `string`[]
 
-Defined in: validate.ts:51
+Defined in: validate.ts:61
 
 Static notes about vase mode that are always true and always worth
 repeating. Rendered as a permanent block under the warnings.

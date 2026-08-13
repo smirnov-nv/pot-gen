@@ -100,6 +100,13 @@ describe('App', () => {
     expect(html).toContain('Стенок / заполнение');
   });
 
+  it('shows the Y sizes only on the shapes that have two axes', () => {
+    expect(mount()).not.toContain('Глубина по кромке');
+    const oval = mount({ shape: 'oval', topSizeY: 60, bottomSizeY: 45 });
+    expect(oval).toContain('Глубина по кромке');
+    expect(oval).toContain('Овал');
+  });
+
   it('surfaces validation errors for an impossible pot', () => {
     expect(mount({ bottomSize: 120 })).toContain('обратный конус');
   });

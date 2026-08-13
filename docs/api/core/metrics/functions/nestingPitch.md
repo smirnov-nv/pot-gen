@@ -8,7 +8,7 @@
 
 > **nestingPitch**(`rings`, `wall`): `number`
 
-Defined in: metrics.ts:92
+Defined in: metrics.ts:93
 
 Nesting pitch: how much a stack grows when one more pot is added.
 

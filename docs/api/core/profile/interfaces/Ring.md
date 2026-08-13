@@ -6,7 +6,7 @@
 
 # Interface: Ring
 
-Defined in: profile.ts:20
+Defined in: profile.ts:21
 
 One horizontal slice of the pot.
 
@@ -16,7 +16,7 @@ One horizontal slice of the pot.
 
 > **z**: `number`
 
-Defined in: profile.ts:22
+Defined in: profile.ts:23
 
 Height of the slice above the build plate, mm.
 
@@ -26,6 +26,6 @@ Height of the slice above the build plate, mm.
 
 > **pts**: `Float64Array`
 
-Defined in: profile.ts:24
+Defined in: profile.ts:25
 
 Flat `[x, y, …]` contour, counter-clockwise seen from above.

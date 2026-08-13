@@ -10,8 +10,9 @@
  */
 
 import type { Params } from './params';
+import { sectionSizes } from './params';
 import type { Ring } from './profile';
-import { baseProfile, buildRings, polygonArea, polygonPerimeter } from './profile';
+import { buildRings, polygonArea, polygonPerimeter, sectionProfile } from './profile';
 
 /** Distance below the rim that is not filled with substrate, mm. */
 const HEADROOM_MM = 12;
@@ -195,8 +196,17 @@ export function computeMetrics(params: Params, rings: readonly Ring[] = buildRin
   // Wavelength is measured on the *smooth* rim contour. Measuring it on the
   // fluted one is circular: a deep wave lengthens the path and makes its own
   // period look comfortably long, exactly when it is least printable.
+  const sizes = sectionSizes(params);
   const smoothRim = polygonPerimeter(
-    baseProfile(params.topSize / 2, params.cornerR, 0, 0, Math.round(params.seg)),
+    sectionProfile({
+      shape: params.shape,
+      halfX: sizes.topHalfX,
+      halfY: sizes.topHalfY,
+      cornerR: params.cornerR,
+      flutes: 0,
+      fluteAmp: 0,
+      seg: Math.round(params.seg),
+    }),
   );
 
   return {
@@ -207,7 +217,14 @@ export function computeMetrics(params: Params, rings: readonly Ring[] = buildRin
     minutes,
     nestingPitch: pitch,
     nestingCount,
-    wallAngleDeg: (Math.atan2((params.topSize - params.bottomSize) / 2, params.height) * 180) / Math.PI,
+    // The steeper of the two axes: that is the wall the slicer has to hold up.
+    wallAngleDeg:
+      (Math.atan2(
+        Math.max(sizes.topHalfX - sizes.bottomHalfX, sizes.topHalfY - sizes.bottomHalfY),
+        params.height,
+      ) *
+        180) /
+      Math.PI,
     rimPerimeter,
     bottomPerimeter,
     bottomArea,

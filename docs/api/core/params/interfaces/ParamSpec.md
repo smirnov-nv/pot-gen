@@ -6,7 +6,7 @@
 
 # Interface: ParamSpec
 
-Defined in: params.ts:90
+Defined in: params.ts:156
 
 Schema entry describing one numeric parameter.
 
@@ -16,7 +16,7 @@ Schema entry describing one numeric parameter.
 
 > **key**: [`NumericParamKey`](../type-aliases/NumericParamKey.md)
 
-Defined in: params.ts:92
+Defined in: params.ts:158
 
 Property name in [Params](Params.md).
 
@@ -26,7 +26,7 @@ Property name in [Params](Params.md).
 
 > **label**: `string`
 
-Defined in: params.ts:94
+Defined in: params.ts:160
 
 Russian label shown in the UI.
 
@@ -36,7 +36,7 @@ Russian label shown in the UI.
 
 > **unit**: `string`
 
-Defined in: params.ts:96
+Defined in: params.ts:162
 
 Unit suffix (mm, °, шт, …). Empty for dimensionless values.
 
@@ -46,7 +46,7 @@ Unit suffix (mm, °, шт, …). Empty for dimensionless values.
 
 > **min**: `number`
 
-Defined in: params.ts:98
+Defined in: params.ts:164
 
 Inclusive lower bound.
 
@@ -56,7 +56,7 @@ Inclusive lower bound.
 
 > **max**: `number`
 
-Defined in: params.ts:100
+Defined in: params.ts:166
 
 Inclusive upper bound.
 
@@ -66,7 +66,7 @@ Inclusive upper bound.
 
 > **step**: `number`
 
-Defined in: params.ts:102
+Defined in: params.ts:168
 
 Slider/stepper increment.
 
@@ -76,7 +76,7 @@ Slider/stepper increment.
 
 > **group**: [`ParamGroup`](../type-aliases/ParamGroup.md)
 
-Defined in: params.ts:104
+Defined in: params.ts:170
 
 Panel section this parameter belongs to.
 
@@ -86,7 +86,7 @@ Panel section this parameter belongs to.
 
 > **description**: `string`
 
-Defined in: params.ts:106
+Defined in: params.ts:172
 
 Russian one-line description; also used in the generated README table.
 
@@ -96,6 +96,16 @@ Russian one-line description; also used in the generated README table.
 
 > `optional` **shellOnly?**: `boolean`
 
-Defined in: params.ts:108
+Defined in: params.ts:174
 
 True when the parameter only affects shell mode.
+
+***
+
+### axisY?
+
+> `optional` **axisY?**: `boolean`
+
+Defined in: params.ts:176
+
+True when the parameter only affects the shapes with an independent Y size.

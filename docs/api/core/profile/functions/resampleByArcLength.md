@@ -8,7 +8,7 @@
 
 > **resampleByArcLength**(`pts`, `m`): `Float64Array`
 
-Defined in: profile.ts:89
+Defined in: profile.ts:137
 
 Resamples a closed polyline to `m` evenly spaced points.
 

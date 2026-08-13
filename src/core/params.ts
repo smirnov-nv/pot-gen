@@ -15,16 +15,42 @@ export type PotMode = 'vase' | 'shell';
 /** UI grouping for a parameter — drives the collapsible panel sections. */
 export type ParamGroup = 'shape' | 'flute' | 'rim' | 'mesh' | 'print' | 'shell';
 
+/**
+ * Cross-section outline.
+ *
+ * `square` and `circle` are the linked variants of `rect` and `oval`: they use
+ * one size for both axes, so the Y controls disappear from the panel instead
+ * of silently doing nothing. `square` is the default and reproduces the
+ * original rounded-square pot exactly — the golden fixtures depend on it.
+ */
+export type SectionShape = 'square' | 'rect' | 'circle' | 'oval';
+
+/** True when the section is an ellipse rather than a rounded rectangle. */
+export function isRoundShape(shape: SectionShape): boolean {
+  return shape === 'circle' || shape === 'oval';
+}
+
+/** True when the section takes an independent Y size. */
+export function isAnisotropicShape(shape: SectionShape): boolean {
+  return shape === 'rect' || shape === 'oval';
+}
+
 /** Full parameter set of the generator. */
 export interface Params {
   /** Generation mode. */
   mode: PotMode;
+  /** Cross-section outline. */
+  shape: SectionShape;
 
   // -- shape ---------------------------------------------------------------
-  /** Outer width across the rim, mm. */
+  /** Outer width across the rim along X, mm. */
   topSize: number;
-  /** Outer width across the base, mm. Smaller than `topSize` => pots nest. */
+  /** Outer width across the base along X, mm. Smaller than `topSize` => pots nest. */
   bottomSize: number;
+  /** Outer width across the rim along Y, mm. Ignored unless the shape is `rect`/`oval`. */
+  topSizeY: number;
+  /** Outer width across the base along Y, mm. Ignored unless the shape is `rect`/`oval`. */
+  bottomSizeY: number;
   /** Total height, mm. */
   height: number;
   /** Corner radius at the rim, mm. Scaled down with the section lower on. */
@@ -84,7 +110,47 @@ export interface Params {
 }
 
 /** Keys of {@link Params} that carry a number. */
-export type NumericParamKey = Exclude<keyof Params, 'mode'>;
+export type NumericParamKey = Exclude<keyof Params, 'mode' | 'shape'>;
+
+/** Outer half sizes of the section at the rim and at the base, mm. */
+export interface SectionSizes {
+  /** Half width at the rim along X. */
+  topHalfX: number;
+  /** Half width at the rim along Y. */
+  topHalfY: number;
+  /** Half width at the base along X. */
+  bottomHalfX: number;
+  /** Half width at the base along Y. */
+  bottomHalfY: number;
+}
+
+/**
+ * Half sizes of the section, with the Y axis resolved.
+ *
+ * On the linked shapes (`square`, `circle`) the Y parameters are ignored and
+ * Y follows X, so every consumer can read one pair of numbers instead of
+ * re-deriving the rule.
+ *
+ * @param p - parameters carrying the shape and the sizes
+ * @returns half sizes at the rim and at the base, mm
+ *
+ * @example
+ * ```ts
+ * import { DEFAULT_PARAMS, sectionSizes } from '@core/params';
+ * sectionSizes({ ...DEFAULT_PARAMS, shape: 'rect', topSizeY: 140 }).topHalfY; // 70
+ * ```
+ */
+export function sectionSizes(
+  p: Pick<Params, 'shape' | 'topSize' | 'bottomSize' | 'topSizeY' | 'bottomSizeY'>,
+): SectionSizes {
+  const linked = !isAnisotropicShape(p.shape);
+  return {
+    topHalfX: p.topSize / 2,
+    topHalfY: (linked ? p.topSize : p.topSizeY) / 2,
+    bottomHalfX: p.bottomSize / 2,
+    bottomHalfY: (linked ? p.bottomSize : p.bottomSizeY) / 2,
+  };
+}
 
 /** Schema entry describing one numeric parameter. */
 export interface ParamSpec {
@@ -106,6 +172,8 @@ export interface ParamSpec {
   description: string;
   /** True when the parameter only affects shell mode. */
   shellOnly?: boolean;
+  /** True when the parameter only affects the shapes with an independent Y size. */
+  axisY?: boolean;
 }
 
 /**
@@ -116,9 +184,14 @@ export interface ParamSpec {
  */
 export const DEFAULT_PARAMS: Readonly<Params> = Object.freeze({
   mode: 'vase',
+  shape: 'square',
 
   topSize: 90,
   bottomSize: 68,
+  // Equal to the X sizes so that switching to `rect`/`oval` starts from the
+  // current pot rather than from a jump.
+  topSizeY: 90,
+  bottomSizeY: 68,
   height: 95,
   cornerR: 10,
   twist: 0,
@@ -157,6 +230,8 @@ export const PARAM_SCHEMA: readonly ParamSpec[] = [
   // shape
   { key: 'topSize', label: 'Ширина по кромке', unit: 'мм', min: 40, max: 200, step: 1, group: 'shape', description: 'внешняя ширина по кромке' },
   { key: 'bottomSize', label: 'Ширина по дну', unit: 'мм', min: 30, max: 190, step: 1, group: 'shape', description: 'внешняя ширина по дну' },
+  { key: 'topSizeY', label: 'Глубина по кромке', unit: 'мм', min: 40, max: 200, step: 1, group: 'shape', description: 'внешний размер по кромке вдоль Y', axisY: true },
+  { key: 'bottomSizeY', label: 'Глубина по дну', unit: 'мм', min: 30, max: 190, step: 1, group: 'shape', description: 'внешний размер по дну вдоль Y', axisY: true },
   { key: 'height', label: 'Высота', unit: 'мм', min: 40, max: 250, step: 1, group: 'shape', description: 'высота' },
   { key: 'cornerR', label: 'Радиус угла', unit: 'мм', min: 2, max: 40, step: 0.5, group: 'shape', description: 'радиус угла по кромке' },
   { key: 'twist', label: 'Кручение', unit: '°/мм', min: -2, max: 2, step: 0.05, group: 'shape', description: 'кручение' },
@@ -314,6 +389,11 @@ export function sanitizeParams(raw: unknown): Params {
 
   if (src['mode'] === 'shell' || src['mode'] === 'vase') out.mode = src['mode'];
 
+  const shape = src['shape'];
+  if (shape === 'square' || shape === 'rect' || shape === 'circle' || shape === 'oval') {
+    out.shape = shape;
+  }
+
   for (const spec of PARAM_SCHEMA) {
     const v = src[spec.key];
     if (typeof v === 'number') out[spec.key] = clampParam(spec.key, v);
@@ -344,6 +424,7 @@ export function sanitizeParams(raw: unknown): Params {
 export function encodeParams(params: Params): string {
   const parts: string[] = [];
   if (params.mode !== DEFAULT_PARAMS.mode) parts.push(`mode=${params.mode}`);
+  if (params.shape !== DEFAULT_PARAMS.shape) parts.push(`shape=${params.shape}`);
   for (const spec of PARAM_SCHEMA) {
     const v = params[spec.key];
     if (v !== DEFAULT_PARAMS[spec.key]) parts.push(`${spec.key}=${v}`);
@@ -392,6 +473,9 @@ export function decodeParams(hash: string): Params {
  */
 export function stlFileName(params: Params): string {
   const n = (v: number): string => String(Math.round(v));
-  const base = `pot_${n(params.topSize)}x${n(params.topSize)}x${n(params.height)}_f${n(params.flutes)}`;
+  const sizes = sectionSizes(params);
+  const base =
+    `pot_${n(sizes.topHalfX * 2)}x${n(sizes.topHalfY * 2)}x${n(params.height)}` +
+    `_f${n(params.flutes)}`;
   return params.mode === 'shell' ? `${base}_shell.stl` : `${base}.stl`;
 }

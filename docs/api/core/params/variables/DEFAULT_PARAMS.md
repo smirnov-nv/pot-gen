@@ -8,7 +8,7 @@
 
 > `const` **DEFAULT\_PARAMS**: `Readonly`\<[`Params`](../interfaces/Params.md)\>
 
-Defined in: params.ts:117
+Defined in: params.ts:185
 
 Defaults — the classic European P9 nursery pot (~0.5 L).
 

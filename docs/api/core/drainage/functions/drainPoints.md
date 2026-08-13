@@ -8,7 +8,7 @@
 
 > **drainPoints**(`params`): [`DrainPoint`](../interfaces/DrainPoint.md)[]
 
-Defined in: drainage.ts:57
+Defined in: drainage.ts:71
 
 Centres of the drainage holes, evenly spaced on the drain ring.
 
@@ -16,13 +16,16 @@ The first hole sits on the diagonal rather than on an axis: the corners of
 the bottom are the stiffest part, and a hole on the axis lands in the
 middle of the flattest span.
 
+On an elongated bottom the ring stretches with it: holes on a circle would
+bunch up in the middle of a 160×70 pot and leave the ends undrained.
+
 ## Parameters
 
 ### params
 
-`Pick`\<[`Params`](../../params/interfaces/Params.md), `"bottomSize"` \| `"drainHoles"`\>
+[`DrainParams`](../type-aliases/DrainParams.md)
 
-parameters carrying `bottomSize` and `drainHoles`
+parameters carrying the shape, the base sizes and `drainHoles`
 
 ## Returns
 

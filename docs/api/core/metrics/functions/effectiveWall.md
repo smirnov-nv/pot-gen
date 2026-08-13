@@ -8,7 +8,7 @@
 
 > **effectiveWall**(`p`): `number`
 
-Defined in: metrics.ts:68
+Defined in: metrics.ts:69
 
 Wall thickness the current mode actually prints.
 

@@ -8,7 +8,7 @@
 
 > **ringLevels**(`p`): `number`
 
-Defined in: profile.ts:283
+Defined in: profile.ts:420
 
 Number of horizontal slices, as the mesh actually uses it.
 

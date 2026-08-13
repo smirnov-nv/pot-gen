@@ -8,7 +8,7 @@
 
 > **polygonPerimeter**(`pts`): `number`
 
-Defined in: profile.ts:333
+Defined in: profile.ts:470
 
 Perimeter of a closed polygon.
 

@@ -8,7 +8,7 @@
 
 > **polygonArea**(`pts`): `number`
 
-Defined in: profile.ts:311
+Defined in: profile.ts:448
 
 Area of a closed polygon via the shoelace formula.
 

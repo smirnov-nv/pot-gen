@@ -6,7 +6,7 @@
 
 # Interface: Params
 
-Defined in: params.ts:19
+Defined in: params.ts:39
 
 Full parameter set of the generator.
 
@@ -16,9 +16,19 @@ Full parameter set of the generator.
 
 > **mode**: [`PotMode`](../type-aliases/PotMode.md)
 
-Defined in: params.ts:21
+Defined in: params.ts:41
 
 Generation mode.
+
+***
+
+### shape
+
+> **shape**: [`SectionShape`](../type-aliases/SectionShape.md)
+
+Defined in: params.ts:43
+
+Cross-section outline.
 
 ***
 
@@ -26,9 +36,9 @@ Generation mode.
 
 > **topSize**: `number`
 
-Defined in: params.ts:25
+Defined in: params.ts:47
 
-Outer width across the rim, mm.
+Outer width across the rim along X, mm.
 
 ***
 
@@ -36,9 +46,29 @@ Outer width across the rim, mm.
 
 > **bottomSize**: `number`
 
-Defined in: params.ts:27
+Defined in: params.ts:49
 
-Outer width across the base, mm. Smaller than `topSize` => pots nest.
+Outer width across the base along X, mm. Smaller than `topSize` => pots nest.
+
+***
+
+### topSizeY
+
+> **topSizeY**: `number`
+
+Defined in: params.ts:51
+
+Outer width across the rim along Y, mm. Ignored unless the shape is `rect`/`oval`.
+
+***
+
+### bottomSizeY
+
+> **bottomSizeY**: `number`
+
+Defined in: params.ts:53
+
+Outer width across the base along Y, mm. Ignored unless the shape is `rect`/`oval`.
 
 ***
 
@@ -46,7 +76,7 @@ Outer width across the base, mm. Smaller than `topSize` => pots nest.
 
 > **height**: `number`
 
-Defined in: params.ts:29
+Defined in: params.ts:55
 
 Total height, mm.
 
@@ -56,7 +86,7 @@ Total height, mm.
 
 > **cornerR**: `number`
 
-Defined in: params.ts:31
+Defined in: params.ts:57
 
 Corner radius at the rim, mm. Scaled down with the section lower on.
 
@@ -66,7 +96,7 @@ Corner radius at the rim, mm. Scaled down with the section lower on.
 
 > **twist**: `number`
 
-Defined in: params.ts:33
+Defined in: params.ts:59
 
 Twist, degrees per mm of height. Non-zero breaks nesting.
 
@@ -76,7 +106,7 @@ Twist, degrees per mm of height. Non-zero breaks nesting.
 
 > **flutes**: `number`
 
-Defined in: params.ts:37
+Defined in: params.ts:63
 
 Number of sine waves around the perimeter. 0 = smooth.
 
@@ -86,7 +116,7 @@ Number of sine waves around the perimeter. 0 = smooth.
 
 > **fluteAmp**: `number`
 
-Defined in: params.ts:39
+Defined in: params.ts:65
 
 Radial amplitude of the fluting at the rim, mm.
 
@@ -96,7 +126,7 @@ Radial amplitude of the fluting at the rim, mm.
 
 > **rimH**: `number`
 
-Defined in: params.ts:43
+Defined in: params.ts:69
 
 Height of the flared lip, mm.
 
@@ -106,7 +136,7 @@ Height of the flared lip, mm.
 
 > **rimFlare**: `number`
 
-Defined in: params.ts:45
+Defined in: params.ts:71
 
 Extra outward offset at the very top, mm.
 
@@ -116,7 +146,7 @@ Extra outward offset at the very top, mm.
 
 > **seg**: `number`
 
-Defined in: params.ts:49
+Defined in: params.ts:75
 
 Points per cross-section.
 
@@ -126,7 +156,7 @@ Points per cross-section.
 
 > **dz**: `number`
 
-Defined in: params.ts:51
+Defined in: params.ts:77
 
 Vertical sampling step, mm.
 
@@ -136,7 +166,7 @@ Vertical sampling step, mm.
 
 > **nozzle**: `number`
 
-Defined in: params.ts:55
+Defined in: params.ts:81
 
 Nozzle diameter, mm.
 
@@ -146,7 +176,7 @@ Nozzle diameter, mm.
 
 > **wallWidth**: `number`
 
-Defined in: params.ts:57
+Defined in: params.ts:83
 
 Extrusion width — in vase mode this *is* the wall thickness, mm.
 
@@ -156,7 +186,7 @@ Extrusion width — in vase mode this *is* the wall thickness, mm.
 
 > **layerH**: `number`
 
-Defined in: params.ts:59
+Defined in: params.ts:85
 
 Layer height, mm.
 
@@ -166,7 +196,7 @@ Layer height, mm.
 
 > **bottomLayers**: `number`
 
-Defined in: params.ts:61
+Defined in: params.ts:87
 
 Number of solid bottom layers.
 
@@ -176,7 +206,7 @@ Number of solid bottom layers.
 
 > **density**: `number`
 
-Defined in: params.ts:63
+Defined in: params.ts:89
 
 Filament density, g/cm³.
 
@@ -186,7 +216,7 @@ Filament density, g/cm³.
 
 > **speed**: `number`
 
-Defined in: params.ts:65
+Defined in: params.ts:91
 
 Effective print speed for the time estimate, mm/s.
 
@@ -196,7 +226,7 @@ Effective print speed for the time estimate, mm/s.
 
 > **pricePerGram**: `number`
 
-Defined in: params.ts:67
+Defined in: params.ts:93
 
 Filament price, ₽ per gram.
 
@@ -206,7 +236,7 @@ Filament price, ₽ per gram.
 
 > **wallThickness**: `number`
 
-Defined in: params.ts:71
+Defined in: params.ts:97
 
 Wall thickness in shell mode, mm.
 
@@ -216,7 +246,7 @@ Wall thickness in shell mode, mm.
 
 > **bottomThickness**: `number`
 
-Defined in: params.ts:73
+Defined in: params.ts:99
 
 Bottom thickness in shell mode, mm.
 
@@ -226,7 +256,7 @@ Bottom thickness in shell mode, mm.
 
 > **drainHoles**: `number`
 
-Defined in: params.ts:75
+Defined in: params.ts:101
 
 Number of drainage holes in the bottom (shell mode).
 
@@ -236,7 +266,7 @@ Number of drainage holes in the bottom (shell mode).
 
 > **drainDia**: `number`
 
-Defined in: params.ts:77
+Defined in: params.ts:103
 
 Diameter of each drainage hole, mm.
 
@@ -246,7 +276,7 @@ Diameter of each drainage hole, mm.
 
 > **slots**: `number`
 
-Defined in: params.ts:79
+Defined in: params.ts:105
 
 Number of vertical air-pruning slots (shell mode). 0 = none.
 
@@ -256,7 +286,7 @@ Number of vertical air-pruning slots (shell mode). 0 = none.
 
 > **slotWidth**: `number`
 
-Defined in: params.ts:81
+Defined in: params.ts:107
 
 Width of each slot, mm.
 
@@ -266,6 +296,6 @@ Width of each slot, mm.
 
 > **slotHeight**: `number`
 
-Defined in: params.ts:83
+Defined in: params.ts:109
 
 Height of each slot, mm.

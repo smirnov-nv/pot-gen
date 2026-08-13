@@ -6,8 +6,8 @@
 
 # Type Alias: NumericParamKey
 
-> **NumericParamKey** = `Exclude`\<keyof [`Params`](../interfaces/Params.md), `"mode"`\>
+> **NumericParamKey** = `Exclude`\<keyof [`Params`](../interfaces/Params.md), `"mode"` \| `"shape"`\>
 
-Defined in: params.ts:87
+Defined in: params.ts:113
 
 Keys of [Params](../interfaces/Params.md) that carry a number.

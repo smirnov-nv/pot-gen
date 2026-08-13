@@ -8,6 +8,6 @@
 
 > **WarningLevel** = `"error"` \| `"warning"` \| `"info"`
 
-Defined in: validate.ts:17
+Defined in: validate.ts:19
 
 Severity of a rule. `error` means it will not print.

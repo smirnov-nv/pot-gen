@@ -16,7 +16,11 @@ describe('schema', () => {
     const keys = PARAM_SCHEMA.map((s) => s.key);
     expect(new Set(keys).size).toBe(keys.length);
 
-    const paramKeys = Object.keys(DEFAULT_PARAMS).filter((k) => k !== 'mode');
+    // The schema describes numeric fields only; `mode` and `shape` are enums
+    // and are carried by hand through the store, the codec and the UI.
+    const paramKeys = Object.keys(DEFAULT_PARAMS).filter(
+      (k) => typeof DEFAULT_PARAMS[k as keyof typeof DEFAULT_PARAMS] === 'number',
+    );
     expect([...keys].sort()).toEqual(paramKeys.sort());
   });
 

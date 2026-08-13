@@ -18,11 +18,12 @@ import type { Params } from './params';
 import { triangulateWithHoles } from './polygon';
 import type { Ring } from './profile';
 import {
-  baseProfile,
   buildRings,
+  polygonPerimeter,
   ringCount,
   ringGeometryAt,
   rotateInPlace,
+  sectionProfile,
 } from './profile';
 
 /** Points per drainage-hole circle. Smooth enough at 5 mm, cheap enough. */
@@ -77,9 +78,23 @@ function circle(cx: number, cy: number, r: number, n = HOLE_SEGMENTS): Float64Ar
 function innerContour(p: Params, z: number, seg: number): Float64Array {
   const g = ringGeometryAt(p, z);
   const outerHalf = g.half * g.flareScale;
-  const half = Math.max(MIN_CAVITY_HALF, outerHalf - (p.wallThickness + g.fluteAmp * g.flareScale));
-  const cornerR = Math.max(0.5, g.cornerR * g.flareScale * (half / outerHalf));
-  const pts = baseProfile(half, cornerR, 0, 0, seg);
+  const outerHalfY = g.halfY * g.flareScaleY;
+  const offset = p.wallThickness + g.fluteAmp * g.flareScale;
+  const half = Math.max(MIN_CAVITY_HALF, outerHalf - offset);
+  const halfY = Math.max(MIN_CAVITY_HALF, outerHalfY - offset);
+  // The radius shrinks with the wall, and on an anisotropic section the axis
+  // that lost the larger share of itself sets the amount.
+  const shrink = Math.min(half / outerHalf, halfY / outerHalfY);
+  const cornerR = Math.max(0.5, g.cornerR * g.flareScale * shrink);
+  const pts = sectionProfile({
+    shape: p.shape,
+    halfX: half,
+    halfY,
+    cornerR,
+    flutes: 0,
+    fluteAmp: 0,
+    seg,
+  });
   if (g.twistAngle !== 0) rotateInPlace(pts, g.twistAngle);
   return pts;
 }
@@ -115,8 +130,11 @@ function slotMask(p: Params, rings: readonly Ring[], seg: number, floorIndex: nu
   const top = Math.min(nz - 2, bottom + Math.max(1, Math.round(p.slotHeight / p.dz)));
   if (top <= bottom) return { cut: () => false, any: false };
 
-  // Slot width is an arc length; convert it to whole segments of the rim.
-  const perimeter = 4 * p.topSize;
+  // Slot width is an arc length; convert it to whole segments. Measured on the
+  // ring the slot actually sits on, because a circle and a square of the same
+  // width differ by a fifth in perimeter and the slot would come out that far
+  // off on a round pot.
+  const perimeter = polygonPerimeter(rings[Math.floor((bottom + top) / 2)]!.pts);
   const widthSegments = Math.max(1, Math.round((p.slotWidth / perimeter) * seg));
   const starts: number[] = [];
   for (let s = 0; s < count; s++) {

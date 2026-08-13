@@ -9,6 +9,13 @@
  */
 
 import type { Params } from './params';
+import { sectionSizes } from './params';
+
+/** Parameters the hole placement reads. */
+export type DrainParams = Pick<
+  Params,
+  'shape' | 'bottomSize' | 'bottomSizeY' | 'topSize' | 'topSizeY' | 'drainHoles'
+>;
 
 /** A hole centre on the bottom, mm. */
 export interface DrainPoint {
@@ -23,7 +30,10 @@ export interface DrainPoint {
  * them, far enough from the wall that the fillet between wall and bottom is
  * not cut through.
  *
- * @param params - parameters carrying `bottomSize`
+ * On an elongated bottom this is the narrow axis: it is the one that decides
+ * whether a hole still clears the wall.
+ *
+ * @param params - parameters carrying the shape and the base sizes
  * @returns radius, mm
  *
  * @example
@@ -33,8 +43,9 @@ export interface DrainPoint {
  * drainRingRadius(DEFAULT_PARAMS); // 17
  * ```
  */
-export function drainRingRadius(params: Pick<Params, 'bottomSize'>): number {
-  return params.bottomSize * 0.25;
+export function drainRingRadius(params: Omit<DrainParams, 'drainHoles'>): number {
+  const s = sectionSizes(params);
+  return Math.min(s.bottomHalfX, s.bottomHalfY) * 0.5;
 }
 
 /**
@@ -44,7 +55,10 @@ export function drainRingRadius(params: Pick<Params, 'bottomSize'>): number {
  * the bottom are the stiffest part, and a hole on the axis lands in the
  * middle of the flattest span.
  *
- * @param params - parameters carrying `bottomSize` and `drainHoles`
+ * On an elongated bottom the ring stretches with it: holes on a circle would
+ * bunch up in the middle of a 160×70 pot and leave the ends undrained.
+ *
+ * @param params - parameters carrying the shape, the base sizes and `drainHoles`
  * @returns hole centres; empty when no holes are requested
  *
  * @example
@@ -54,14 +68,16 @@ export function drainRingRadius(params: Pick<Params, 'bottomSize'>): number {
  * drainPoints(DEFAULT_PARAMS).length; // 4
  * ```
  */
-export function drainPoints(params: Pick<Params, 'bottomSize' | 'drainHoles'>): DrainPoint[] {
+export function drainPoints(params: DrainParams): DrainPoint[] {
   const count = Math.round(params.drainHoles);
   if (count <= 0) return [];
-  const r = drainRingRadius(params);
+  const s = sectionSizes(params);
+  const rx = s.bottomHalfX * 0.5;
+  const ry = s.bottomHalfY * 0.5;
   const out: DrainPoint[] = [];
   for (let i = 0; i < count; i++) {
     const a = (2 * Math.PI * i) / count + Math.PI / 4;
-    out.push({ x: r * Math.cos(a), y: r * Math.sin(a) });
+    out.push({ x: rx * Math.cos(a), y: ry * Math.sin(a) });
   }
   return out;
 }

@@ -8,7 +8,7 @@
 
 > **buildRings**(`p`): [`Ring`](../interfaces/Ring.md)[]
 
-Defined in: profile.ts:198
+Defined in: profile.ts:309
 
 Builds the stack of cross-sections describing the outer surface.
 

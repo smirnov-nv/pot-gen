@@ -6,7 +6,7 @@
 
 # Interface: Metrics
 
-Defined in: metrics.ts:23
+Defined in: metrics.ts:24
 
 Everything the metrics panel displays.
 
@@ -16,7 +16,7 @@ Everything the metrics panel displays.
 
 > **usableVolumeL**: `number`
 
-Defined in: metrics.ts:25
+Defined in: metrics.ts:26
 
 Usable substrate volume, litres.
 
@@ -26,7 +26,7 @@ Usable substrate volume, litres.
 
 > **grams**: `number`
 
-Defined in: metrics.ts:27
+Defined in: metrics.ts:28
 
 Filament mass, grams.
 
@@ -36,7 +36,7 @@ Filament mass, grams.
 
 > **cost**: `number`
 
-Defined in: metrics.ts:29
+Defined in: metrics.ts:30
 
 Filament cost, ₽.
 
@@ -46,7 +46,7 @@ Filament cost, ₽.
 
 > **layers**: `number`
 
-Defined in: metrics.ts:31
+Defined in: metrics.ts:32
 
 Number of printed layers.
 
@@ -56,7 +56,7 @@ Number of printed layers.
 
 > **minutes**: `number`
 
-Defined in: metrics.ts:33
+Defined in: metrics.ts:34
 
 Rough print time, minutes.
 
@@ -66,7 +66,7 @@ Rough print time, minutes.
 
 > **nestingPitch**: `number`
 
-Defined in: metrics.ts:35
+Defined in: metrics.ts:36
 
 How much a stack grows per added pot, mm.
 
@@ -76,7 +76,7 @@ How much a stack grows per added pot, mm.
 
 > **nestingCount**: `number`
 
-Defined in: metrics.ts:37
+Defined in: metrics.ts:38
 
 Pots that fit in [STACK\_LIMIT\_MM](../variables/STACK_LIMIT_MM.md) of stacking height.
 
@@ -86,7 +86,7 @@ Pots that fit in [STACK\_LIMIT\_MM](../variables/STACK_LIMIT_MM.md) of stacking 
 
 > **wallAngleDeg**: `number`
 
-Defined in: metrics.ts:39
+Defined in: metrics.ts:40
 
 Wall inclination from vertical, degrees.
 
@@ -96,7 +96,7 @@ Wall inclination from vertical, degrees.
 
 > **rimPerimeter**: `number`
 
-Defined in: metrics.ts:41
+Defined in: metrics.ts:42
 
 Perimeter of the rim section, mm.
 
@@ -106,7 +106,7 @@ Perimeter of the rim section, mm.
 
 > **bottomPerimeter**: `number`
 
-Defined in: metrics.ts:43
+Defined in: metrics.ts:44
 
 Perimeter of the bottom section, mm.
 
@@ -116,7 +116,7 @@ Perimeter of the bottom section, mm.
 
 > **bottomArea**: `number`
 
-Defined in: metrics.ts:45
+Defined in: metrics.ts:46
 
 Footprint area of the bottom, mm².
 
@@ -126,7 +126,7 @@ Footprint area of the bottom, mm².
 
 > **flutePeriod**: `number`
 
-Defined in: metrics.ts:47
+Defined in: metrics.ts:48
 
 Wavelength of the fluting along the rim, mm. `Infinity` when smooth.
 
@@ -136,6 +136,6 @@ Wavelength of the fluting along the rim, mm. `Infinity` when smooth.
 
 > **effectiveWall**: `number`
 
-Defined in: metrics.ts:49
+Defined in: metrics.ts:50
 
 Wall thickness the estimate assumed, mm — differs per mode.

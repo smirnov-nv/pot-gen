@@ -6,7 +6,7 @@
 
 # Interface: DrainPoint
 
-Defined in: drainage.ts:14
+Defined in: drainage.ts:21
 
 A hole centre on the bottom, mm.
 
@@ -16,7 +16,7 @@ A hole centre on the bottom, mm.
 
 > **x**: `number`
 
-Defined in: drainage.ts:15
+Defined in: drainage.ts:22
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: drainage.ts:15
 
 > **y**: `number`
 
-Defined in: drainage.ts:16
+Defined in: drainage.ts:23

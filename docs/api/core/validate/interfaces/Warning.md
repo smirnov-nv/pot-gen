@@ -6,7 +6,7 @@
 
 # Interface: Warning
 
-Defined in: validate.ts:20
+Defined in: validate.ts:22
 
 One triggered rule.
 
@@ -16,7 +16,7 @@ One triggered rule.
 
 > **id**: `string`
 
-Defined in: validate.ts:22
+Defined in: validate.ts:24
 
 Stable identifier, used in tests and as a React key.
 
@@ -26,7 +26,7 @@ Stable identifier, used in tests and as a React key.
 
 > **level**: [`WarningLevel`](../type-aliases/WarningLevel.md)
 
-Defined in: validate.ts:24
+Defined in: validate.ts:26
 
 Severity.
 
@@ -36,6 +36,6 @@ Severity.
 
 > **text**: `string`
 
-Defined in: validate.ts:26
+Defined in: validate.ts:28
 
 Russian explanation of what goes wrong.

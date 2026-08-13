@@ -16,6 +16,7 @@ import {
   type Params,
   type PotMode,
   type Preset,
+  type SectionShape,
   clampParam,
   decodeParams,
   sanitizeParams,
@@ -49,6 +50,8 @@ interface PotStore {
   setParam: (key: NumericParamKey, value: number) => void;
   /** Switches generation mode. */
   setMode: (mode: PotMode) => void;
+  /** Switches the cross-section outline. */
+  setShape: (shape: SectionShape) => void;
   /** Replaces the whole parameter set (preset, import, shared link). */
   setParams: (params: Params) => void;
   /** Restores defaults. */
@@ -109,6 +112,12 @@ export const usePotStore = create<PotStore>()(
         set((state) => ({
           ...pushHistory(state, 'mode'),
           params: { ...state.params, mode },
+        })),
+
+      setShape: (shape) =>
+        set((state) => ({
+          ...pushHistory(state, 'shape'),
+          params: { ...state.params, shape },
         })),
 
       setParams: (params) =>

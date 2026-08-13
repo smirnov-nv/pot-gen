@@ -8,7 +8,7 @@
 
 > **rotateInPlace**(`pts`, `angle`): `void`
 
-Defined in: profile.ts:288
+Defined in: profile.ts:425
 
 Rotates a flat contour about the origin, in place.
 

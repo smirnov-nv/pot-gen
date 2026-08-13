@@ -8,7 +8,7 @@
 
 > **ringGeometryAt**(`p`, `z`): [`RingGeometry`](../interfaces/RingGeometry.md)
 
-Defined in: profile.ts:251
+Defined in: profile.ts:377
 
 Section parameters at a given height.
 

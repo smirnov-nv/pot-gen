@@ -8,9 +8,11 @@
  * @module core/validate
  */
 
+import { drainRingRadius } from './drainage';
 import type { Metrics } from './metrics';
 import { computeMetrics } from './metrics';
 import type { Params } from './params';
+import { isRoundShape, sectionSizes } from './params';
 import { estimateVertexCount } from './mesh';
 
 /** Severity of a rule. `error` means it will not print. */
@@ -43,6 +45,14 @@ const MIN_FLUTE_PERIOD_MM = 3;
  * twice the nozzle diameter.
  */
 const MAX_WIDTH_RATIO = 2.0;
+
+/**
+ * Rim aspect ratio above which the long wall stops holding its shape.
+ *
+ * 2.5:1 is where a 90 mm-class pot grows a flat span longer than its own
+ * height; below that the corners still brace the wall.
+ */
+const MAX_ASPECT_RATIO = 2.5;
 
 /**
  * Static notes about vase mode that are always true and always worth
@@ -124,7 +134,8 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
     );
   }
 
-  if (params.bottomSize > params.topSize) {
+  const sizes = sectionSizes(params);
+  if (sizes.bottomHalfX > sizes.topHalfX || sizes.bottomHalfY > sizes.topHalfY) {
     add(
       'inverted-taper',
       'error',
@@ -132,15 +143,31 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
     );
   }
 
+  // Aspect ratio of the rim. A long flat wall has nothing bracing it: in vase
+  // mode it is a single extrusion line and it bows inward as the pot cools.
+  const aspect =
+    Math.max(sizes.topHalfX, sizes.topHalfY) / Math.max(1e-6, Math.min(sizes.topHalfX, sizes.topHalfY));
+  if (aspect > MAX_ASPECT_RATIO) {
+    add(
+      'aspect-extreme',
+      'warning',
+      `Сечение вытянуто ${aspect.toFixed(1)}:1 — длинная стенка ничем не раскреплена ` +
+        'и втянется внутрь при остывании. Добавьте гофр или сократите разницу сторон.',
+    );
+  }
+
   if (params.twist !== 0) {
     add('twist', 'info', 'При кручении вложение работать не будет — горшки не сложатся в стопку.');
   }
 
-  if (params.cornerR > params.bottomSize / 2) {
+  // An ellipse has no corners; the radius is not applied there at all, so the
+  // rule would be a lie.
+  const narrowBottomHalf = Math.min(sizes.bottomHalfX, sizes.bottomHalfY);
+  if (!isRoundShape(params.shape) && params.cornerR > narrowBottomHalf) {
     add(
       'corner-collapse',
       'error',
-      `Радиус угла ${params.cornerR} мм больше половины дна (${params.bottomSize / 2} мм) — углы схлопываются.`,
+      `Радиус угла ${params.cornerR} мм больше половины дна (${narrowBottomHalf} мм) — углы схлопываются.`,
     );
   }
 
@@ -195,8 +222,8 @@ export function validate(params: Params, metrics: Metrics = computeMetrics(param
 
     // Cavity half-width, as the mesh builder derives it. Holes that reach the
     // cavity wall are silently dropped by the builder, so say so here.
-    const cavityHalf = params.bottomSize / 2 - params.wallThickness - params.fluteAmp;
-    if (params.drainHoles > 0 && params.bottomSize * 0.25 + params.drainDia / 2 >= cavityHalf - 1) {
+    const cavityHalf = narrowBottomHalf - params.wallThickness - params.fluteAmp;
+    if (params.drainHoles > 0 && drainRingRadius(params) + params.drainDia / 2 >= cavityHalf - 1) {
       add(
         'drain-no-fit',
         'warning',

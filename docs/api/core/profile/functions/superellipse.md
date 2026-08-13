@@ -8,7 +8,7 @@
 
 > **superellipse**(`a`, `cornerR`, `n?`): `Float64Array`
 
-Defined in: profile.ts:55
+Defined in: profile.ts:56
 
 Dense sampling of a rounded square as a superellipse.
 
